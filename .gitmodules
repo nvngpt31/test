@@ -1,3 +1,6 @@
 [submodule "myrepo"]
 	path = myrepo
 	url = git@github.com:tinup-ku/myrepo.git
+[submodule "myrepo1"]
+	path = myrepo1
+	url = git@github.com:tinup-ku/myrepo1.git
