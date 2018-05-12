@@ -1,0 +1,5 @@
+0x0001 2017-10-11T18:32:05UTC 2022-10-11T18:32:05UTC /CN=Puppet CA: prdtxlvpptapp01.associatesys.local
+0x0002 2017-10-11T18:36:35UTC 2022-10-11T18:36:35UTC /CN=ucmnui.associatesys.local
+0x0003 2017-10-11T18:39:27UTC 2022-10-11T18:39:27UTC /CN=prdtxlvpptapp01.associatesys.local
+0x0004 2017-10-11T18:40:36UTC 2022-10-11T18:40:36UTC /CN=ucmoss.associatesys.local
+0x0005 2017-10-11T20:10:09UTC 2022-10-11T20:10:09UTC /CN=prdtxlvpptapp05.associatesys.local

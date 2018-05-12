@@ -1,0 +1,80 @@
+---
+:backends:
+  - json
+  - yaml
+
+:json:
+  :datadir: "/etc/puppetlabs/code/environments/%{environment}/hieradata/"
+
+:yaml:
+  :datadir: "/etc/puppetlabs/code/environments/%{environment}/hieradata/"
+
+:hierarchy:
+  - "%{fqdn}"
+  - "%{execfqdn}"
+  - "%{hostname}"
+
+  - "modules/%{product}/data/%{clientcert}"
+  - "modules/%{product}/data/%{fqdn}"
+  - "modules/%{product}/data/%{hostname}"
+  - "modules/%{product}/data/%{child}"
+  - "modules/%{product}/data/%{child}/%{envloc}"
+  - "modules/%{product}/data/%{child}/%{env}"
+  - "modules/%{product}/data/%{child}/%{building}"
+  - "modules/%{product}/data/%{child}/%{centrify_domain}"
+  - "modules/%{product}/data/%{child}/%{majorenv}"
+  - "modules/%{product}/data/%{envloc}"
+  - "modules/%{product}/data/%{env}"
+  - "modules/%{product}/data/%{building}"
+  - "modules/%{product}/data/%{centrify_domain}"
+  - "modules/%{product}/data/%{majorenv}"
+  - "modules/%{product}/data/global"
+
+  - "modules/%{smeucmplatform}/data/%{clientcert}"
+  - "modules/%{smeucmplatform}/data/%{fqdn}"
+  - "modules/%{smeucmplatform}/data/%{hostname}"
+  - "modules/%{smeucmplatform}/data/%{child}"
+  - "modules/%{smeucmplatform}/data/%{child}/%{envloc}"
+  - "modules/%{smeucmplatform}/data/%{child}/%{env}"
+  - "modules/%{smeucmplatform}/data/%{child}/%{building}"
+  - "modules/%{smeucmplatform}/data/%{child}/%{centrify_domain}"
+  - "modules/%{smeucmplatform}/data/%{child}/%{majorenv}"
+  - "modules/%{smeucmplatform}/data/%{envloc}"
+  - "modules/%{smeucmplatform}/data/%{env}"
+  - "modules/%{smeucmplatform}/data/%{building}"
+  - "modules/%{smeucmplatform}/data/%{centrify_domain}"
+  - "modules/%{smeucmplatform}/data/%{majorenv}"
+  - "modules/%{smeucmplatform}/data/global"
+
+  - "modules/%{smeucmtool}/data/%{clientcert}"
+  - "modules/%{smeucmtool}/data/%{fqdn}"
+  - "modules/%{smeucmtool}/data/%{hostname}"
+  - "modules/%{smeucmtool}/data/%{child}"
+  - "modules/%{smeucmtool}/data/%{child}/%{envloc}"
+  - "modules/%{smeucmtool}/data/%{child}/%{env}"
+  - "modules/%{smeucmtool}/data/%{child}/%{building}"
+  - "modules/%{smeucmtool}/data/%{child}/%{centrify_domain}"
+  - "modules/%{smeucmtool}/data/%{child}/%{majorenv}"
+  - "modules/%{smeucmtool}/data/%{envloc}"
+  - "modules/%{smeucmtool}/data/%{env}"
+  - "modules/%{smeucmtool}/data/%{building}"
+  - "modules/%{smeucmtool}/data/%{centrify_domain}"
+  - "modules/%{smeucmtool}/data/%{majorenv}"
+  - "modules/%{smeucmtool}/data/global"
+
+  - "%{application}/%{envloc}/${child}"
+  - "%{application}/%{env}/${child}"
+  - "%{application}/%{envloc}"
+  - "%{application}/%{env}"
+  - "%{application}/%{building}"
+  - "%{application}/main"
+
+  - "%{app}"
+  - "%{envloc}"
+  - "%{env}_%{building}"
+  - "%{env}"
+  - "%{building}"
+
+  - base
+  - common
+
