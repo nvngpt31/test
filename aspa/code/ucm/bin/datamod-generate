@@ -1,0 +1,25 @@
+#!/bin/bash
+
+  if [[ -z $1 ]] 
+  then echo "... PLEASE PROVIDE A NAME FOR YOUR DATA MODULE"
+       exit 1
+  fi 
+
+  mod=$1
+
+  dirs="
+    ${mod}/templates
+    ${mod}/data"
+
+  files="
+    ${mod}/data/global.yaml
+    ${mod}/README.md"
+
+  for i in $dirs  ; do mkdir -p $i ; done 
+  for i in $files ; do touch $i    ; done
+
+  echo "---" >  ${mod}/data/global.yaml
+  echo "# $mod Data Module" > ${mod}/README.md
+  echo "Description coming soon, hopefully..." >> ${mod}/README.md
+
+

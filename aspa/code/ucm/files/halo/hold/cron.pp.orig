@@ -1,0 +1,48 @@
+define fig::custom::cron (
+  $command = $title,
+  $user    = 'nouser',
+  $defined = 'false',
+  $hour    = '0',
+  $minute  = '0',
+
+){
+
+  if $command == 'blank' {
+    notify {
+      'msg_crn_blank':
+        message => '...NO JOBS TO MANAGE AT THIS TIME'
+    }
+  }
+
+  else { 
+    exec {
+      "${command}_cron_file":
+        path    => "$path",
+        command => "touch /etc/cron.allow",
+        unless  => "test -f /etc/cron.allow"
+    }
+
+    file_line {
+      "${command}_access":
+        path    => '/etc/security/access.conf',
+        line    => '+:ALL:cron',
+        require => Exec["${command}_cron_file"]
+        
+    }
+
+    file_line {
+      "${command}_user_in_allow":
+        path    => "/etc/cron.allow",
+        line    => "${user}",
+        require => File_line["${command}_access"]
+    }
+
+    cron {
+      "${user}_${command}":
+        command => "${command}",
+        user    => "${user}",
+        hour    => "${hour}",
+        minute  => "${minute}",
+    }
+  }
+}

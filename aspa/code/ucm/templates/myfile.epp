@@ -1,0 +1,3 @@
+this is a static line of text.
+hostname fact is <%= $facts[hostname] %>
+ucmfoo = <%= hiera('ucmfoo') %>

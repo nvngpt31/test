@@ -1,0 +1,41 @@
+---
+:backends:
+  - json
+  - yaml
+:json:
+  :datadir: "/etc/puppetlabs/code/environments/%{environment}/hieradata/"
+:yaml:
+  :datadir: "/etc/puppetlabs/code/environments/%{environment}/hieradata/"
+:hierarchy:
+  - "%{fqdn}"
+  - "%{execfqdn}"
+  - "%{hostname}"
+
+  - "data/%{product}/%{clientcert}"
+  - "data/%{product}/%{env}/%{child}"
+  - "data/%{product}/%{envloc}"
+  - "data/%{product}/%{env}"
+  - "data/%{product}/%{building}"
+  - "data/%{product}/%{centrify_domain}"
+  - "data/%{product}/%{majorenv}_${child}"
+  - "data/%{product}/%{majorenv}"
+  - "data/%{product}/%{child}"
+  - "data/%{product}/main"
+  - "data/%{product}"
+ 
+  - "%{application}/%{envloc}/${child}"
+  - "%{application}/%{env}/${child}"
+  - "%{application}/%{envloc}"
+  - "%{application}/%{env}"
+  - "%{application}/%{building}"
+  - "%{application}/main"
+
+  - "%{app}"
+  - "%{envloc}"
+  - "%{env}_%{building}"
+  - "%{env}"
+  - "%{building}"
+
+  - base
+  - common
+

@@ -1,0 +1,26 @@
+apache   ALL=(root) NOPASSWD:/usr/local/bin/tda-puppet-deploy, /usr/bin/r10k, /usr/local/bin/tpd-deploy-hiera 
+apache   ALL=(root) NOPASSWD:/usr/local/bin/tda-puppet-deploy
+apache   ALL=(root) NOPASSWD:/usr/bin/r10k
+apache   ALL=(root) NOPASSWD:/usr/local/bin/tpd-deploy-env
+apache   ALL=(root) NOPASSWD:/root/pwb/puppet-update-hiera
+apache   ALL=(root) NOPASSWD:/etc/puppet/puppet-world/bin/puppet-update-hiera
+apache   ALL=(root) NOPASSWD:/usr/local/bin/hieradeploy
+apache   ALL=(root) NOPASSWD:/usr/local/bin/reporthiera
+apache   ALL=(root) NOPASSWD:/usr/local/bin/tgit
+apache   ALL=(root) NOPASSWD:/usr/local/bin/psc
+apache   ALL=(root) NOPASSWD:/usr/local/bin/deployprofiles
+apache   ALL=(root) NOPASSWD:/usr/local/bin/prer10k
+apache   ALL=(root) NOPASSWD:/usr/local/bin/tpd-deploy-mod
+apache   ALL=(root) NOPASSWD:/usr/local/bin/tpd-report-hiera
+apache   ALL=(root) NOPASSWD:/usr/local/bin/tpd-deploy-hiera
+apache   ALL=(root) NOPASSWD:/usr/local/bin/tpd-puppetfile
+apache   ALL=(root) NOPASSWD:/usr/local/bin/deployyourstuff
+apache   ALL=(root) NOPASSWD:/usr/local/bin/tgit
+apache   ALL=(root) NOPASSWD:/usr/local/bin/tlazy
+apache   ALL=(root) NOPASSWD:/usr/local/bin/trepo
+apache   ALL=(root) NOPASSWD:/usr/local/bin/yamlparse
+apache   ALL=(root) NOPASSWD:/usr/local/bin/runr10k
+kum394   ALL=(root) NOPASSWD:/usr/local/bin/tdeploy
+
+apache   ALL=(root) NOPASSWD:/usr/bin/sudo - root
+
