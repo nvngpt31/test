@@ -1,3 +1,0 @@
-clear ; curl -s -k -u ucmadmin:unity2018 -H Content-Type:application/json -H Accept:application/json -X POST -d '{"name":"product","value":"appx"}' https://ucmnui.associatesys.local/api/v2/hostgroups/appx/parameters | python -m json.tool
-
-
