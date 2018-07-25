@@ -1,0 +1,31 @@
+Ad hoc commmands:
+Run a command:  ( below -a is argument and module name is not given as default module is "commmand" )
+Replave all with specific hostname or hostgroup-name
+  ansible all -a "uname -a"
+
+Run a command using module name:
+  ansilble all -m shell -a "uname -a"
+  ansible  all -m raw -a "uname -a"
+  ansilble hostname -i ./myhost_inventory -m raw -a "show version" -u <username> -k  | grep 'SUCCESS\|Version'
+     ( Above -i for inventory file to use and -k is to ask the password )
+  other commands to try on network devices: sh run , sh arp , show mac address-table
+ 
+Copy files:  ( -b is to become privilege user i.e. sudo  )
+  ansible all -m copy -a 'src=dvd.repo dest=/etc/yum.repos.d owner=root group=root mode=0644' -b
+
+
+    ===== 
+Playbook:
+created the playbooks here: /home/kum394/play on dev02
+
+Running the playbook:
+ansible-playbook pb1.yaml
+
+syntax checking playbook:
+ansible-playbook --syntax-check myplaybook.yml
+
+Below is to run in noop mode:
+ansible-playbook --check myplaybook.yml
+
+Stepping through a playbook:
+ansible-playbook --step myplaybook.yml
