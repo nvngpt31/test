@@ -1,0 +1,69 @@
+[kum394@devctlvpptapp02 play]$ cat pb1.yaml
+---
+- name: Test install
+  hosts: all
+  become: true
+
+  vars:
+    somevar: "some test string"
+    somepkg: strace
+
+  pre_tasks:
+  - debug: msg="Started deployment. Current time is {{ansible_date_time.date}} {{ansible_date_time.time}}"
+
+  tasks:
+  - name: Install tree
+    yum:
+      name: tree
+      state: present
+    register: Output1
+
+  - name: Install mytree
+    yum:
+      name: tree
+      state: present
+    register: Output2
+
+  - name: Install with vars
+    yum:
+      name: "{{ somepkg }}"
+      state: present
+    register: Output3
+
+  - name: loop
+    debug:
+      msg: "items here: {{ item }}"
+    with_items:
+      - "hello1"
+      - "hello2"
+      - "hello3"
+
+  - name: Install in loop
+    yum:
+      name: "{{ item }}"
+      state: present
+    with_items:
+      - "vim"
+      - "git"
+
+  - name: create user groups
+    group:
+      name: "{{ item }}"
+    loop:
+      - testgroup1
+      - testgroup2
+      - testgroup3
+
+  - name: Configure file
+    lineinfile:
+      path: /var/log/mylog.conf
+      line: '*.* @192.168.102.215:514'
+      state: present
+
+  - debug: msg="Task output- {{Output3}}"
+
+  post_tasks:
+  - debug: msg="Completed deployment. Current time is {{ansible_date_time.date}} {{ansible_date_time.time}}"
+  - debug: msg="Task output- {{Output1}}"
+  - debug: msg="Task output- {{Output2}}"
+  - debug: msg="Task output- {{Output3}}"
