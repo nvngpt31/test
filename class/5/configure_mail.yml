@@ -1,21 +1,25 @@
 ---
-- hosts: all
-tasks:
-- name: Include configure_mail.yml
-include:
-configure_mail.yml
-when: inventory_hostname in groups['mailservers']
-handlers:
-- name: start_postfix
-service:
+- name: Install postfix
+yum:
 name: postfix
-state: started
-- name: start_dovecot
-service:
+state: latest
+tags:
+- server
+notify:
+- start_postfix
+- name: Install dovecot
+yum:
 name: dovecot
-state: started
-DO407-A2.3-en-2-20170725 177
-- name: restart_postfix
-service:
-name: postfix
-state: restarted
+state: latest
+tags:
+- client
+notify:
+- start_dovecot
+- name: Download main.cf configuration
+get_url:
+url: http://materials.example.com/task_control/main.cf
+dest: /etc/postfix/main.cf
+tags:
+- server
+notify:
+- restart_postfix
