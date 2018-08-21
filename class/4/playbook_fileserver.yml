@@ -1,0 +1,8 @@
+---
+- name: Install fileserver packages
+hosts: fileservers
+tasks:
+- name: Includes the variable
+include_vars: package.yml
+- name: Installs the package
+include: install_package.yml
