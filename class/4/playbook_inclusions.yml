@@ -13,7 +13,6 @@ package: httpd
 service: httpd
 svc_state: started
 - name: Install the firewall
-DO407-A2.3-en-2-20170725 135
 yum:
 name: "{{ firewall_pkg }}"
 state: latest
