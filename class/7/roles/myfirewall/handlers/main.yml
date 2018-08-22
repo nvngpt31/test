@@ -1,8 +1,8 @@
 ---
 # handlers file for myfirewall
 - name: restart firewalld
-service:
-name: firewalld
-state: restarted
+  service:
+    name: firewalld
+    state: restarted
 
 
