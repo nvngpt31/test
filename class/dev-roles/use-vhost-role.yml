@@ -1,0 +1,14 @@
+---
+- name: use vhost role playbook
+  hosts: webservers
+
+  pre_tasks: #this is the start of the dictionary
+    - debug: 
+        msg: 'Beginning web server configuration.' #this is a key-value pair which belongs to the debug dictionary and the debug dictionary belongs to the pre_tasks dictionary
+
+  roles:
+    - myvhost
+
+  post_tasks:
+    - debug:
+        msg: 'Web server has been configured.'
