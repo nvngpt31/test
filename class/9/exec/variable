@@ -1,5 +1,0 @@
-newusers:
-  - name: ansibleuser1
-    pw: redhat
-  - name: ansibleuser2
-    pw: Re4H1T

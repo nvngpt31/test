@@ -1,3 +1,0 @@
----
-dependencies:
-  - { role: myfirewall, firewall_service: http }

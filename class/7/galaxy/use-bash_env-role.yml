@@ -1,7 +1,0 @@
----
-- name: use student.bash_env role playbook
-  hosts: webservers
-  user: devops
-  become: true
-  roles:
-    - student.bash_env
