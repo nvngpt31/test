@@ -1,0 +1,1000 @@
+  141  vi inventory/inventory 
+  142  mkdir inventory/inventory
+  143  mv inventory/inventory inventory/inventory.file
+  144  mkdir inventory/inventory
+  145  wget http://materials.example.com/dynamic/binventory.py -O inventory/inventory/binventory.py
+  146  ls -la inventory
+  147  rm -rf inventory/inventory
+  148  mv inventory/inventory.file inventory/inventory
+  149  wget http://materials.example.com/dynamic/binventory.py -O inventory/binventory.py
+  150  cat inventory/binventory.py 
+  151  ls -la inventory/*
+  152  chmod 755 inventory/binventory.py 
+  153  ls -la inventory/*
+  154  ansible everyone -m ping
+  155  ls -ltr
+  156  pwd
+  157  whoami
+  158  pwd
+  159  ls -ltr
+  160  cd dep-lab/
+  161  ls -lt
+  162  cat ansible.cfg 
+  163  history
+  164  history | grep copy
+  165  ansible everyone --list-hosts
+  166   ansible everyone -m copy -a 'content="Managed by Ansible\n" dest=/etc/motd' -u devops
+  167  vi ansible.cfg 
+  168   ansible everyone -m copy -a 'content="Managed by Ansible\n" dest=/etc/motd' -u devops
+  169  vi inventory/inventory 
+  170  ansible everyone --list-hosts
+  171  ansible everyone -m command -a 'id'
+  172  ls -ls inventory
+  173  cat inventory/inventory 
+  174  inventory/binventory.py --list
+  175  ansible everyone -m command -a 'id'
+  176  lab deploy grade
+  177  ansible everyone -m command -a 'cat /etc/motd'
+  178  ansible everyone -m copy \ > -a 'content="This server is managed by Ansible.\n" dest=/etc/motd' --become
+  179  ansible everyone -m copy -a 'content="This server is managed by Ansible.\n" dest=/etc/motd' --become
+  180  ansible everyone -m command -a 'cat /etc/motd'
+  181  lab deploy grade
+  182  vi inventory/inventory 
+  183  ansible everyone -m copy -a 'content="This server is managed by Ansible.\n" dest=/etc/motd' --become
+  184  ansible everyone -m command -a 'cat /etc/motd'
+  185  lab deploy grade
+  186  cd ..
+  187  cd imp-playbook/
+  188  lab playbook grade
+  189  cd ..
+  190  lab playbookinternet setup
+  191  ls -ltr
+  192  cd imp-lab/
+  193  git
+  194  sudo yum install git
+  195  git status
+  196  cd
+  197  mkdir new
+  198  cd new
+  199  git init .
+  200  git status
+  201  vi readme
+  202  git status
+  203  git add *
+  204  git status
+  205  git commit -am "upd"
+  206  git config --global user.name "Punit Kumar"
+  207  git config --global user.email punit_k@yahoo.com
+  208  git status
+  209  vi readme 
+  210  git status
+  211  git commit -am "upd"
+  212  git status
+  213  cd ..
+  214  git clone https://github.com/tinup-ku/test.git
+  215  cd test
+  216  ls -la
+  217  cd class
+  218  ls -la
+  219  cd ..
+  220  cd aspa
+  221  ls -la
+  222  tree
+  223  sudo yum install tree
+  224  tree
+  225  cd ..
+  226  ls -la
+  227  git pull origin
+  228  ls -la
+  229  cd class/
+  230  ls -la
+  231  tree class
+  232  cd ..
+  233  tree class
+  234  git pull origin
+  235  tree
+  236  history
+  237  git pull origin
+  238  pwd
+  239  ls -ltr
+  240  cd test
+  241  cd 4
+  242  cd class/4
+  243  ls -la
+  244  vi environment.yml 
+  245  vi playbook_variables.yml 
+  246  vi ~.vimrc
+  247  vi playbook_variables.yml 
+  248  vi ~.vimrc
+  249  mv  ~.vimrc ~/.vimrx
+  250  mv  ~/.vimrx ~/.vimrc
+  251  vi playbook_variables.yml 
+  252  ansible-playbook --syntax-check playbook_variables.yml 
+  253  vi playbook_variables.yml 
+  254  ansible-playbook --syntax-check playbook_variables.yml 
+  255  vi playbook_variables.yml 
+  256  vi setup_facts.yaml 
+  257  ansible-playbook --syntax-check setup_facts.yaml 
+  258  ll
+  259  vi playbook_facts.yml 
+  260  ansible-playbook --syntax-check playbook_facts.yml 
+  261  vi environment.yml 
+  262  ansible-playbook --syntax-check environment.yml 
+  263  vi environment.yml 
+  264  ansible-playbook --syntax-check environment.yml 
+  265  vi environment.yml 
+  266  ansible-playbook --syntax-check environment.yml 
+  267  vi environment.yml 
+  268  ansible-playbook --syntax-check environment.yml 
+  269  vi environment.yml 
+  270  vi variables.yml 
+  271  vi playbook_inclusions.yml 
+  272  ansible-playbook --syntax-check playbook_inclusions.yml 
+  273  vi playbook_inclusions.yml 
+  274  ansible-playbook --syntax-check playbook_inclusions.yml 
+  275  vi playbook_inclusions.yml 
+  276  ansible-playbook --syntax-check playbook_inclusions.yml 
+  277  vi playbook_inclusions.yml 
+  278  ansible-playbook --syntax-check playbook_inclusions.yml 
+  279  vi playbook_inclusions.yml 
+  280  vi t
+  281  cat playbook_inclusions.yml 
+  282  vi t'
+  283  vi t
+  284  cat t
+  285  cat playbook_inclusions.yml 
+  286  cat t
+  287  vi playbook_inclusions.yml 
+  288  cat t
+  289  vi playbook_inclusions.yml 
+  290  cat playbook_inclusions.yml 
+  291  vi playbook_inclusions.yml 
+  292  ansible-playbook --syntax-check playbook_inclusions.yml 
+  293  vi playbook_inclusions.yml 
+  294  ansible-playbook --syntax-check playbook_inclusions.yml 
+  295  ls -la
+  296  rm t
+  297  cat variables.yml 
+  298  ls -ltr
+  299  cd ..
+  300  cd 5
+  301  ls -la
+  302  vi configure_database.yml 
+  303  ansible-playbook --syntax-check configure_database.yml 
+  304  vi configure_database.yml 
+  305  ansible-playbook --syntax-check configure_database.yml 
+  306  vi configure_database.yml 
+  307  ansible-playbook --syntax-check configure_database.yml 
+  308  vi configure_database.yml 
+  309  ansible-playbook --syntax-check configure_database.yml 
+  310  vi configure_database.yml 
+  311  cd
+  312  mkidir bin
+  313  mkdir bin
+  314  vi bin/yamlparser
+  315  chmod 755 bin/yamlparser 
+  316  vi .bash_profile 
+  317  cd test/class/4
+  318  ls -ltr
+  319  cat environment.yml 
+  320  ansible-playbook --syntax-check environment.yml 
+  321  yamlparser environment.yml 
+  322  sudo yum install ruby
+  323  yamlparser environment.yml 
+  324  cd ../5
+  325  pwd
+  326  vi ~/.bash_profile 
+  327  . ~/.bash_profile 
+  328  dirs
+  329  vi ~/.bash_profile 
+  330  . ~/.bash_profile 
+  331  dirs
+  332  ls -ltr
+  333  cd 5
+  334  ls -ltr
+  335  yamlparser configure_database.yml 
+  336  cat configure_database.yml 
+  337  ansible-playbook --syntax-check configure_database.yml 
+  338  cd
+  339  lab manage-variables-playbooks setup
+  340  cd dev-vars-playbook/
+  341  cp ~/test/class/4/playbook_variables.yml .
+  342  vi playbook_variables.yml 
+  343  ansible-playbook --syntax-check playbook_variables.yml 
+  344  mv playbook_variables.yml playbook.yml
+  345  ansible-playbook --syntax-check playbook_variables.yml 
+  346  ansible-playbook --syntax-check playbook.yml 
+  347  vi playbook.yml 
+  348  ls -la
+  349  cat inventory 
+  350  vi playbook.yml 
+  351  ansible-playbook playbook.yml 
+  352  lab manage-variables-playbooks cleanup
+  353  cd ..
+  354  ls -la
+  355  ls -ltr
+  356  ls -la new
+  357  rm -rf new
+  358  ls -la
+  359  ls -ltr
+  360  cp -ap dep-install test/class/
+  361  cp -ap dep-adhoc test/class/
+  362  cp -ap dep-dynamic test/class/
+  363  cp -ap basic-playbook test/class/
+  364  cp -ap imp-playbook test/class/
+  365  cp -ap dep-lab test/class/
+  366  cp -ap imp-lab test/class/
+  367  cp -ap dev-vars-playbook test/class/
+  368  cd test
+  369  git status
+  370  git add *
+  371  git commit -am "upd"
+  372  git push origin
+  373  cd ..
+  374  ls -ltr
+  375  lab manage-variables-facts setup
+  376  cd dev-vars-facts/
+  377  dirs
+  378  cp ~1/4/custom.fact .
+  379  cp ~1/4/setup_facts.yaml .
+  380  mv setup_facts.yaml setup_facts.yaml.orig
+  381  ls -la
+  382  mv custom.fact 
+  383  ls -la
+  384  ansible webserver -m setup -a 'filter=ansible_user*'
+  385  mv setup_facts.yaml.orig setup_facts.yaml
+  386  vi setup_facts.yaml 
+  387  ansible webserver -m setup -a 'filter=ansible_local'
+  388  ansible-playbook --syntax-check setup_facts.yaml 
+  389  ansible-playbook setup_facts.yaml 
+  390  ansible webserver -m setup -a 'filter=ansible_local'
+  391  ls -la
+  392  dirs
+  393  cp ~/test/class/4/playbook_facts.yml .
+  394  vi playbook_facts.yml 
+  395  mv playbook_facts.yml playbook.yml
+  396  vi playbook.yml 
+  397  ansible servera.lab.example.com -m command -a 'systemctl status httpd'
+  398  ansible-playbook --syntax-check playbook.yml 
+  399  ansible-playbook  playbook.yml 
+  400  ansible servera.lab.example.com -m command -a 'systemctl status httpd'
+  401  lab manage-variables-facts grade
+  402  ls -la
+  403  mv setup_facts.yaml setup_facts.yml
+  404  lab manage-variables-facts grade
+  405  cd ..
+  406  ls -ltr
+  407  lab manage-variables-inclusions setup
+  408  cd dev-vars-inclusions/
+  409  mkdir tasks && cd tasks
+  410  pwd
+  411  dirs
+  412  cp ~/test/class/4/environment.yml .
+  413  cat environment.yml 
+  414  cd ..
+  415  mkdir vars
+  416  cd vars/
+  417  cp ~/test/class/4/variables.yml .
+  418  cat variables.yml 
+  419  cd ..
+  420  cp ~/test/class/4/playbook_inclusions.yml .
+  421  ll
+  422  cat playbook_inclusions.yml 
+  423  vi playbook_inclusions.yml 
+  424  ansible-playbook --syntax-check playbook.yml 
+  425  ll
+  426  mv playbook_inclusions.yml playbook.yml 
+  427  ansible-playbook --syntax-check playbook.yml 
+  428  vi playbook.yml 
+  429  cat vars/variables.yml 
+  430  vi playbook.yml 
+  431  ansible-playbook --syntax-check playbook.yml 
+  432  ansible-playbook playbook.yml 
+  433  curl http://servera.lab.example.com
+  434  lab manage-variables-inclusions grade
+  435  cd ..
+  436  ls -ltr
+  437  ls -ltr ~/test/class/
+  438  cp -ap dev-vars-facts ~/test/class/
+  439  cp -ap dev-vars-inclusions ~/test/class/
+  440  cd dev-vars-inclusions/
+  441  lab manage-variables-inclusions grade
+  442  lab manage-variables cleanup
+  443  dirs
+  444  cd ~2
+  445  ls -la
+  446  vi playbook_errors.yml 
+  447  ansible-playbook --syntax-check playbook_errors.yml 
+  448  vi playbook_errors.yml 
+  449  ansible-playbook --syntax-check playbook_errors.yml 
+  450  vi playbook_errors.yml 
+  451  ansible-playbook --syntax-check playbook_errors.yml 
+  452  ll
+  453  vi playbook_flow_control.yml 
+  454  vi configure_database.yml 
+  455  yamlparser configure_database.yml 
+  456  vi playbook_flow_control.yml 
+  457  vi playbook_errors.yml 
+  458  vi playbook_flow_control.yml 
+  459  ansible-playbook --syntax-check playbook_flow_control.yml 
+  460  ansible-playbook --syntax-check playbook_errors.yml 
+  461  ls -la
+  462  vi configure_db.yaml 
+  463  ansible-playbook --syntax-check configure_db.yaml 
+  464  vi configure_mail.yml 
+  465  cd
+  466  pwd
+  467  history
+  468  cd
+  469  lab task-control-flowcontrol setup
+  470  cd dev-flowcontrol/
+  471  ls -la
+  472  dirs
+  473  cp ~1/5/configure_database.yml .
+  474  vi configure_database.yml 
+  475  cp ~1/5/playbook_flow_control.yml .
+  476  mv playbook_flow_control.yml playbook.yml 
+  477  vi playbook.yml 
+  478  ansible-playbook --syntax-check playbook.yml 
+  479  ansible-playbook  playbook.yml 
+  480  ansible all -a 'yum list installed mariadb-bench mariadb-libs mariadb-test'
+  481  ansible all -a 'grep Ansible /etc/my.cnf'
+  482  ansible all -a 'id db_user'
+  483  ansible all -a 'id db_admin'
+  484  lab task-control-flowcontrol grade
+  485  lab task-control-flowcontrol cleanup
+  486  cd ..
+  487  cp -ap dev-flowcontrol ~/test/class/
+  488  ls -ltr 
+  489  ls -ltr ~/test/class/
+  490  cd test
+  491  git pull origin
+  492  git status
+  493  git add *
+  494  git commit -am'*"
+  495  git commit -am"ups"
+  496  git push origin
+  497  cd
+  498  ls -ltr
+  499  cd
+  500  cd test
+  501  ls -ltr
+  502  cd class/
+  503  ll
+  504  cd
+  505  cd test/class
+  506  cd 5
+  507  ls -la
+  508  ls -ltr
+  509  mv configure_mailyml configure_mail.yml
+  510  ls -la
+  511  ls -ltr
+  512  mv configure_db.yaml configure_db.yml
+  513  ls -la
+  514  git status
+  515  git add *
+  516  git commit -am"u"
+  517  git push origin
+  518  cd
+  519  ls -ltr
+  520  cd dev-flowcontrol/
+  521  ll
+  522  vi playbook.yml 
+  523  vi configure_database.yml 
+  524  cat playbook.yml 
+  525  cat configure_database.yml 
+  526  cat playbook.yml 
+  527  cat configure_database.yml 
+  528  cd ..
+  529  ls -ltr
+  530  lab task-control-handlers setup
+  531  ls -lllltr
+  532  ls -ltr
+  533  cd dev-handlers/
+  534  ls -la
+  535  cat inventory 
+  536  dirs
+  537  cp ~2/configure_db.yml .
+  538  vi configure_db.yml 
+  539  ansible-playbook --syntax-check configure_db.yml 
+  540  ansible-playbook configure_db.yml 
+  541  vi configure_db.yml 
+  542  ansible-playbook --syntax-check configure_db.yml 
+  543  ansible-playbook configure_db.yml 
+  544  vi configure_db.yml 
+  545  ansible-playbook --syntax-check configure_db.yml 
+  546  ansible-playbook configure_db.yml 
+  547  lab task-control-handlers grade
+  548  lab task-control-handlers cleanup 
+  549  dirs
+  550  cd ~2
+  551  ls -ltr
+  552  cat configure_mail.yml 
+  553  vi configure_mail.yml 
+  554  uname -a
+  555  vi configure_mail.yml 
+  556  ansible-playbook --syntax-check configure_mail.yml 
+  557  vi configure_mail.yml 
+  558  ansible-playbook --syntax-check configure_mail.yml 
+  559  vi configure_mail.yml 
+  560  ansible-playbook --syntax-check configure_mail.yml 
+  561  vi configure_mail.yml 
+  562  ansible-playbook --syntax-check configure_mail.yml 
+  563  vi configure_mail.yml 
+  564  yamlparser configure_mail.yml 
+  565  ls -la
+  566  c
+  567  cd
+  568  history
+  569  lab task-control-tags setup
+  570  cd dev-tags/
+  571  ls -la
+  572  cp ~2/configure_mail.yml .
+  573  cd ~2
+  574  ls -la
+  575  grep -i include *
+  576  git pull origin
+  577  ls -ltr
+  578  vi playbook_tags.yml 
+  579  ansible-playbook --syntax-check configure_mail.yml 
+  580  ansible-playbook --syntax-check playbook_tags.yml 
+  581  cd
+  582  pwd
+  583  ls -ltr
+  584  cd dev-tags/
+  585  ls -la
+  586  cp ~2/playbook_tags.yml playbook.yml
+  587  ls -la
+  588  ansible-playbook --syntax-check playbook.yml 
+  589  vi configure_mail.yml 
+  590  ansible-playbook playbook.yml --tags 'server'
+  591  ansible mailservers -a 'yum list installed postfix'
+  592  ansible-playbook playbook.yml --skip-tags 'server'
+  593  ansible mailservers -a 'yum list installed dovecot'
+  594  lab task-control-tags grade
+  595  lab task-control-tags cleanup
+  596  cd -
+  597  cd ~2
+  598  ls -la
+  599  git pull
+  600  pwd
+  601  cd test
+  602  ls -ltr
+  603  git status
+  604  git pull origin
+  605  git status
+  606  git add *
+  607  git commit -am"test"
+  608  git push origin
+  609  git pull origin
+  610  ls -la
+  611  cd class/
+  612  ls -la
+  613  cd 5
+  614  ls -ltr
+  615  cat playbook_tags.yml 
+  616  cd ..
+  617  ls -la
+  618  cd 6
+  619  ls -la
+  620  cd ..
+  621  cd 5
+  622  ls -la
+  623  vi playbook_errors.yml
+  624  ansible-playbook --syntax-check playbook_errors.yml 
+  625  vi configure_db.yml 
+  626  vi playbook_errors.yml 
+  627  cp playbook_errors.yml playbook_errors_updated.yml 
+  628  vi playbook_errors_updated.yml 
+  629  ansible-playbook --syntax-check playbook_errors_updated.yml 
+  630  vi playbook_errors_updated.yml 
+  631  ansible-playbook --syntax-check playbook_errors_updated.yml 
+  632  vi playbook_errors_updated.yml 
+  633  ansible-playbook --syntax-check playbook_errors_updated.yml 
+  634  vi playbook_errors_updated.yml 
+  635  ansible-playbook --syntax-check playbook_errors_updated.yml 
+  636  vi playbook_errors_updated.yml 
+  637  ansible-playbook --syntax-check playbook_errors_updated.yml 
+  638  vi playbook_errors_updated.yml 
+  639  cp playbook_errors_updated.yml playbook_errors_updated2.yml 
+  640  vi playbook_errors_updated2.yml 
+  641  ansible-playbook --syntax-check playbook_errors_updated2.yml 
+  642  git status
+  643  git add *
+  644  git commit -am"test"
+  645  git pull origin
+  646  git push origin
+  647  cd
+  648  cd 6
+  649  cd -
+  650  cd ..
+  651  cd 6
+  652  ls -la
+  653  cat inventory 
+  654  vi inventory 
+  655  cat motd.j2 
+  656  vi motd.yml 
+  657  ansible-playbook --syntax-check motd.yml 
+  658  vi motd.yml 
+  659  ansible-playbook --syntax-check motd.yml 
+  660  vi motd.yml 
+  661  git status
+  662  git commit -am"test"
+  663  git push origin
+  664  cd ..
+  665  cd 7
+  666  ls -la
+  667  cd roles/myvhost/tasks/
+  668  ls -la
+  669  vi main.yml 
+  670  yamlparser main.yml 
+  671  cd ..
+  672  cd handlers/
+  673  ls -la
+  674  vi main.yml 
+  675  yamlparser main.yml 
+  676  cat main.yml 
+  677  cd ..
+  678  ls -la
+  679  cat files/html/index.html 
+  680  cd ..
+  681  ls -la
+  682  cd ..
+  683  ls -la
+  684  vi use-vhost-role.yml 
+  685  ansible-playbook --syntax-check use-vhost-role.yml 
+  686  vi use-vhost-role.yml 
+  687  cat use-vhost-role.yml 
+  688  ansible-playbook --syntax-check use-vhost-role.yml
+  689  yamlparser use-vhost-role.yml 
+  690  ansible-playbook --syntax-check ./use-vhost-role.yml
+  691  pwd
+  692  cd roles/myfirewall/tasks/
+  693  vi main.yml 
+  694  cd ..
+  695  ls -la
+  696  ansible-playbook --syntax-check ./use-vhost-role.yml
+  697  vi roles/myfirewall/handlers/main.yml 
+  698  ansible-playbook --syntax-check ./use-vhost-role.yml
+  699  vi use-vhost-role.yml 
+  700  ansible-playbook --syntax-check ./use-vhost-role.yml
+  701  vi use-vhost-role.yml 
+  702  find .
+  703  vi ./roles/myfirewall/defaults/main.yml
+  704  vi ./roles/myvhost/meta/main.yml
+  705  ansible-playbook --syntax-check ./use-vhost-role.yml
+  706  yamlparser ./roles/myvhost/meta/main.yml
+  707  yamlparser use-vhost-role.yml 
+  708  vi use-vhost-role.yml 
+  709  git status
+  710  git add *
+  711  git commit -am"test"
+  712  git push origin
+  713  cd galaxy/
+  714  ls -la
+  715  vi install-roles.yml 
+  716  vi use-bash_env-role.yml 
+  717  cat install-roles.yml 
+  718  yamlparser install-roles.yml 
+  719  ansible-playbook --syntax-check use-bash_env-role.yml 
+  720  cd ..
+  721  cd 8
+  722  ls -la
+  723  cd delegation/
+  724  ls -la
+  725  vi inventory 
+  726  vi site.yml 
+  727  ansible-playbook --syntax-check site.yml 
+  728  vi site.yml 
+  729  ansible-playbook --syntax-check site.yml 
+  730  ls -la
+  731  pwd
+  732  mv async ..
+  733  ls -la
+  734  git status
+  735  cd ..
+  736  ls -la
+  737  cd delegation/
+  738  ls -la
+  739  cd ..
+  740  ls -la
+  741  git add *
+  742  git status
+  743  git commit -am"upd"
+  744  git status
+  745  git push origin
+  746  cd async/
+  747  ls -la
+  748  vi longfiles.j2 
+  749  vi async.yml 
+  750  ansible-playbook --syntax-check async.yml 
+  751  cd ..
+  752  ls -la
+  753  cd ..
+  754  cd 9
+  755  ls -la
+  756  cd exec/
+  757  ls -la
+  758  vi variable 
+  759  yamlparser variable 
+  760  vi create_users.yml 
+  761  ansible-playbook --syntax-check create_users.yml 
+  762  pwd
+  763  cd ..
+  764  pwd
+  765  git status
+  766  git add *
+  767  git commit -am"upd"
+  768  git push origin
+  769  lab task-control-failures setup
+  770  cd dev-failures/
+  771  dirs
+  772  cp ~/test/class/5/playbook_errors.yml .
+  773  vi playbook_errors.yml 
+  774  mv playbook_errors.yml playbook.yml
+  775  ansible-playbook playbook.yml 
+  776  vi playbook.yml 
+  777  ansible-playbook playbook.yml 
+  778  vi playbook.yml 
+  779  ansible-playbook playbook.yml 
+  780  ls -la
+  781  mv playbook.yml playbook.yml.orig
+  782  history
+  783  cd
+  784  lab jinja2-implement setup
+  785  ls -la /home/student/jinja2/files/
+  786  cd jinja2/
+  787  ls -la
+  788  cd files/
+  789  ls -la
+  790  cd ..
+  791  pwd
+  792  ls -la
+  793  pwd
+  794  cp ~/test/class/6/inventory .
+  795  cat inventory 
+  796  ls -la
+  797  ls -la files/
+  798  cat files/motd.j2 
+  799  cat files/motd.yml 
+  800  cp files/motd.yml .
+  801  ls -la
+  802  vi motd.yml 
+  803  ansible-playbook --syntax-check motd.yml 
+  804  ansible-playbook motd.yml 
+  805  cat motd.yml 
+  806  cp files/motd.j2 .
+  807  ansible-playbook motd.yml 
+  808  ssh devops@servera
+  809  lab jinja2-implement grade
+  810  lab jinja2-implement cleanup
+  811  cd ..
+  812  cd dev-failures/
+  813  ls -la
+  814  cp ~/test/class/5/playbook_errors_updated.yml .
+  815  vi playbook_errors_updated.yml 
+  816  mv playbook_errors_updated.yml playbook.yml
+  817  ansible-playbook playbook.yml
+  818  vi playbook.yml
+  819  ansible-playbook playbook.yml
+  820  ls -la
+  821  cp playbook.yml playbook.yml.1
+  822  cp ~/test/class/5/playbook_errors_updated2.yml .
+  823  less playbook_errors_updated2.yml 
+  824  !
+  825  mv playbook_errors_updated2.yml playbook.yml
+  826  ansible-playbook playbook.yml
+  827  vi playbook.yml
+  828  ansible-playbook playbook.yml
+  829  vi playbook.yml
+  830  ansible-playbook playbook.yml
+  831  vi playbook.yml
+  832  ansible-playbook playbook.yml
+  833  vi playbook.yml
+  834  lab task-control-failures cleanup
+  835  cd ..
+  836  cd
+  837  lab creating-roles setup
+  838  cd dev-roles/
+  839  ls -la
+  840  cp -a ~/test/class/7/roles .
+  841  tree roles
+  842  vi roles/myvhost/tasks/main.yml 
+  843  cat roles/myvhost/files/html/index.html 
+  844  mkdir roles/myvhost/templates
+  845  mv vhost.conf.j2 roles/myvhost/templates/
+  846  cp -a ~/test/class/7/use-vhost-role.yml .
+  847  vi use-vhost-role.yml 
+  848  ansible-playbook --syntax-check use-vhost-role.yml 
+  849  vi use-vhost-role.yml 
+  850  ansible-playbook --syntax-check use-vhost-role.yml 
+  851  ansible-playbook use-vhost-role.yml 
+  852  ansible webservers -a 'yum list installed httpd'
+  853  cat use-vhost-role.yml 
+  854  ansible webservers -a 'yum list installed httpd'
+  855  ansible webservers -a 'cat /etc/httpd/conf.d/ vhost.conf'
+  856  ansible webservers -a 'yum list installed httpd'
+  857  ansible-playbook use-vhost-role.yml 
+  858  ansible webservers -a 'cat /etc/httpd/conf.d/ vhost.conf'
+  859  ansible webservers -a 'cat /etc/httpd/conf.d/vhost.conf'
+  860  curl -S http://servera.lab.example.com
+  861  tree
+  862  cat roles/myfirewall/tasks/main.yml 
+  863  cat roles/myfirewall/defaults/main.yml 
+  864  vi roles/myvhost/meta/main.yml 
+  865  lab creating-roles grade
+  866  lab creating-roles cleanup
+  867  cat use-vhost-role.yml 
+  868  ls -al use-vhost-role.yml 
+  869  ls
+  870  vim use-vhost-role.yml 
+  871  cat use-vhost-role.yml 
+  872  ls -ltr
+  873  history
+  874  history | less
+  875  pwd
+  876  cat /home/student/dev-roles/use-vhost-role.yml 
+  877  vi use-vhost-role.yml 
+  878  history
+  879  ansible-playbook use-vhost-role.yml
+  880  vi use-vhost-role.yml 
+  881  yamlparser use-vhost-role.yml 
+  882  ansible-playbook use-vhost-role.yml
+  883  yamlparser use-vhost-role.yml 
+  884  vi use-vhost-role.yml 
+  885  ansible-galaxy --lst
+  886  ansible-galaxy --list
+  887  ansible-galaxy list
+  888  vi ansible.cfg 
+  889  vi use-vhost-role.yml 
+  890  cat ansible.cfg 
+  891  ls -la
+  892  pwd
+  893  vi ansible.cfg 
+  894  cd
+  895  ansible-galaxy setup
+  896  lab ansible-galaxy setup
+  897  cd dev-roles/
+  898  ls -la
+  899  cp -a ~/test/class/7/galaxy/install-roles.yml .
+  900  cat install-roles.yml 
+  901  ls roles/
+  902  ansible-galaxy install -p roles -r installroles. yml
+  903  ansible-galaxy install -p roles -r install-roles.yml 
+  904  ls roles/
+  905  cp -a ~/test/class/7/galaxy/use-bash_env-role.yml .
+  906  cat use-bash_env-role.yml 
+  907  ls -la
+  908  ansible-playbook -i inventory use-bash_env-role.yml
+  909  md5sum roles/student.bash_env/templates/*
+  910  ssh servera
+  911  ssh servera md5sum /etc/skel/ {.bash_profile,.bashrc,.vimrc}
+  912  ansible-playbook -i inventory use-bash_env-role.yml
+  913  ssh servera md5sum /etc/skel/ {.bash_profile,.bashrc,.vimrc}
+  914  grep vimrc  roles/student.bash_env/*
+  915  grep -ir vimrc  roles/student.bash_env/*
+  916  ssh servera md5sum /etc/skel/{.bash_profile,.bashrc,.vimrc}
+  917  md5sum roles/student.bash_env/templates/*
+  918  ansible-galaxy init --offline -p roles empty.example
+  919  ls roles/
+  920  tree roles/empty.example/
+  921  cat roles/empty.example/tasks/main.yml 
+  922  lab ansible-galaxy grade
+  923  lab ansible-galaxy cleanup
+  924  cd
+  925  lab patterns setup
+  926  which lab
+  927  cat /usr/local/bin/lab
+  928  cd patterns/
+  929  ls -la
+  930  cat inventory 
+  931  ansible db1.example.com -i inventory --list
+  932  ansible 172.25.252.44 -i inventory --list
+  933  ansible all -i inventory --list
+  934  ansible london -i inventory --list
+  935  less inventory 
+  936  !
+  937  ansible environments -i inventory --list
+  938  ansible dev -i inventory --list
+  939  ansible 'db,&london' -i inventory --list-hosts
+  940  lab configure-delegation setup
+  941  ls -la
+  942  cd ..
+  943  ls -ltr
+  944  cd configure-delegation/
+  945  ls -ltr
+  946  ls -la
+  947  ls -la inventory/
+  948  cp -a ~/test/class/8/delegation/inventory inventory/
+  949  cat inventory/inventory 
+  950  ls -la
+  951  mv servera.lab.example.com-httpd.conf.j2 templates/
+  952  mv serverc.lab.example.com-httpd.conf.j2 templates/
+  953  vi templates/index.html.j2
+  954  cat templates/index.html.j2 
+  955  cp -a ~/test/class/8/delegation/site.yml .
+  956  vi site.yml 
+  957  ansible-playbook --syntax-check site.yml
+  958  ansible-playbook site.yml 
+  959  vi site.yml 
+  960  ansible all --list
+  961  ls -la
+  962  cat ansible.cfg 
+  963  mv inventory/inventory inventory/hosts
+  964  ansible all --list
+  965  ansible-playbook site.yml 
+  966  curl http://serverc.lab.example.com/ external
+  967  curl http://serverc.lab.example.com/external
+  968  lab configure-delegation cleanup
+  969  cd test
+  970  ls -ltr
+  971  cd class
+  972  ls -ltr
+  973  cd 8
+  974  ls -la
+  975  cd 9
+  976  cd ..
+  977  cd 9
+  978  tree
+  979  cd
+  980  lab troubleshoot-playbooks setup
+  981  cd ~/troubleshooting/
+  982  ls -la
+  983  vi ansible.cfg 
+  984  ansible --version
+  985  pwd
+  986  cd ..
+  987  ls -ltr
+  988  ls -ltr ~/test/class/
+  989  cp -a dev-handlers ~/test/class/
+  990  cp -a dev-tags ~/test/class/
+  991  cp -a jinja2 ~/test/class/
+  992  cp -a dev-failures ~/test/class/
+  993  cp -a dev-roles ~/test/class/
+  994  cp -a patterns ~/test/class/
+  995  ls -ltr ~/test/class/
+  996  cd ~/test
+  997  git status
+  998  git add *
+  999  git commit -am"upd"
+ 1000  git push origin
+ 1001  w
+ 1002  pwd
+ 1003  ls -ltr
+ 1004  cd
+ 1005  lab configure-async setup
+ 1006  cd configure-async/
+ 1007  ll
+ 1008  cp ~/test/class/8/async/longfiles.j2 .
+ 1009  cp ~/test/class/8/async/async.yml .
+ 1010  mkdir templates
+ 1011  ls -la
+ 1012  mv longfiles.j2 templates/
+ 1013  cat async.yml 
+ 1014  vi async.yml 
+ 1015  ansible-playbook --syntax-check async.yml 
+ 1016  ansible-playbook async.yml 
+ 1017  lab configure-async cleanup
+ 1018  vi async.yml 
+ 1019  ls -ltr
+ 1020  cd ..
+ 1021  ls -ltr
+ 1022  cp -a configure-async ~/test/class/
+ 1023  tree ~/test/class/configure-async/
+ 1024  dirs
+ 1025  pushd ~/test/class/
+ 1026  dirs -v
+ 1027  dirs
+ 1028  cd 0 && git status
+ 1029  git status
+ 1030  git add *
+ 1031  git commit -am"upd"
+ 1032  git push origin
+ 1033  lab configure-ansible-vault setup
+ 1034  cd
+ 1035  cd conf-ansible-vault/
+ 1036  ls -la
+ 1037  ansible-vault create super-secret.yml
+ 1038  cat super-secret.yml 
+ 1039  ansible-vault view super-secret.yml 
+ 1040  ansible-vault edit super-secret.yml 
+ 1041  ansible-vault view super-secret.yml 
+ 1042  wget http://materials.example.com/ playbooks/passwd.yml
+ 1043  ls -la
+ 1044  wget http://materials.example.com/playbooks/passwd.yml
+ 1045  ls -ltr
+ 1046  ansible-vault rekey passwd.yml
+ 1047  nsible-vault decrypt passwd.yml -- output=passwd-decrypted.yml
+ 1048  ansible-vault decrypt passwd.yml -- output=passwd-decrypted.yml
+ 1049  pwd
+ 1050  ansible-vault decrypt passwd.yml --output=passwd-decrypted.yml
+ 1051  ansible-vault decrypt passwd.yml
+ 1052  wget http://materials.example.com/playbooks/passwd.yml
+ 1053  ansible-vault decrypt passwd.yml
+ 1054  rm passwd.yml
+ 1055  wget http://materials.example.com/playbooks/passwd.yml
+ 1056  ansible-vault decrypt passwd.yml
+ 1057  ls -ltr
+ 1058  cat passwd.yml
+ 1059  cat passwd.yml.1
+ 1060  rm mv passwd.yml.1 passwd.yml
+ 1061  mv passwd.yml.1 passwd.yml
+ 1062  ls -la
+ 1063  wget http://materials.example.com/playbooks/passwd.yml
+ 1064  ls -la
+ 1065  ansible-vault rekey passwd.yml
+ 1066  ansible-vault view passwd.yml 
+ 1067  ansible-vault decrypt passwd.yml --output=passwd-decrypted.yml
+ 1068  cat passwd-decrypted.yml 
+ 1069  ansible-vault encrypt passwd-decrypted.yml --output=passwd-encrypted.yml
+ 1070  lab configure-ansible-vault grade
+ 1071  cd
+ 1072  lab execute-ansible-vault setup
+ 1073  cd exec-ansible-vault/
+ 1074  ansible-vault create secret.yml
+ 1075  tree ~/test/class/9/exec
+ 1076  tree ~/test/class/9/exec/create_users.yml .
+ 1077  cp ~/test/class/9/exec/create_users.yml .
+ 1078  cp ~/test/class/9/exec/variable .
+ 1079  ls -la
+ 1080  cat create_users.yml 
+ 1081  ansible-playbook --syntax-check create_users.yml 
+ 1082  ansible-playbook --syntax-check --ask-vault-pass create_users.yml 
+ 1083  echo 'redhat' > vault-pass
+ 1084  chmod 0600 vault-pass
+ 1085  ansible-playbook --vault-passwordfile= vault-pass create_users.yml
+ 1086  ansible-playbook --vault-passwordfile=vault-pass create_users.yml
+ 1087  ansible-playbook --vault-password-file=vault-pass create_users.yml
+ 1088  ssh -o PreferredAuthentications=password ansibleuser1@servera.lab.example.com
+ 1089  ssh -o PreferredAuthentications=password ansibleuser2@servera.lab.example.com
+ 1090  lab execute-ansible-vault grade
+ 1091  lab execute-ansible-vault cleanup
+ 1092  which lab
+ 1093  vi /usr/local/bin/lab 
+ 1094  cp /usr/local/bin/lab ~/test/class/
+ 1095  env
+ 1096  env | less
+ 1097  env | grep -i cour
+ 1098  env | grep -i cou
+ 1099  cd
+ 1100  lab troubleshoot setup
+ 1101  cd ~/troubleshooting/
+ 1102  ls -la
+ 1103  cat ansible.cfg 
+ 1104  vi ansible.cfg 
+ 1105  cp ansible.cfg ansible.cfg.orig
+ 1106  vi ansible.cfg
+ 1107  ansible-playbook samba.yml 
+ 1108  tail ansible.log 
+ 1109  vi samba.yml 
+ 1110  ansible-playbook samba.yml 
+ 1111  vi samba.yml 
+ 1112  ansible-playbook samba.yml --syntax-check
+ 1113  vi samba.yml 
+ 1114  ansible-playbook samba.yml --syntax-check
+ 1115  ansible-playbook samba.yml 
+ 1116  ping servera
+ 1117  ssh servera
+ 1118  ansible-playbook samba.yml --vvvv
+ 1119  ansible-playbook samba.yml -vvvv
+ 1120  vi inventory 
+ 1121  ansible-playbook samba.yml
+ 1122  vi samba.conf.j2 
+ 1123  vi samba.yml 
+ 1124  ansible-playbook samba.yml
+ 1125  ansible-playbook --step samba.yml
+ 1126  y
+ 1127  vi samba.yml 
+ 1128  lab troubleshoot-managedhosts setup
+ 1129  cd
+ 1130  cd troubleshooting/
+ 1131  ansible-playbook mailrelay.yml --check
+ 1132  ansible servera.lab.example.com -u devops -b -a "head /etc/postfix/main.cf"
+ 1133  ansible-playbook mailrelay.yml 
+ 1134  ansible servera.lab.example.com -u devops -b -a "head /etc/postfix/main.cf"
+ 1135  vi mailrelay.yml 
+ 1136  ansible-playbook mailrelay.yml 
+ 1137  ansible servera.lab.example.com -u devops -b -a "firewall-cmd --list-services"
+ 1138  telnet servera.lab.example.com 25
+ 1139  history
+ 1140  history >~/test/class/history.1

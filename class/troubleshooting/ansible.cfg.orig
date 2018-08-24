@@ -1,0 +1,7 @@
+[defaults]
+log_path = /home/student/troubleshooting/ansible.log 
+inventory = /home/student/troubleshooting/inventory
+remote_user = devops
+
+[privilege_escalation]
+become      = true

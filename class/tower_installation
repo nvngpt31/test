@@ -1,0 +1,9 @@
+[root@tower ~]# history
+    1  curl -O -J http://content.example.com/ansible2.3/x86_64/dvd/ansible-tower/ansible-tower-setup-bundle-3.1.1-1.el7.tar.gz
+    2  tar xzf ansible-tower-setup-bundle-3.1.1-1.el7.tar.gz
+    3  cd ansible-tower-setup-bundle-3.1.1-1.el7
+    4  grep pass inventory
+    5  vi inventory
+    6  ./setup.sh 
+    7  wget http://materials.example.com/Ansible-Tower-license.txt
+
