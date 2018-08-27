@@ -1,0 +1,10 @@
+[masters]
+master1.example.com
+
+[nodes]
+node1.example.com
+
+[ocp:children]
+masters
+nodes
+

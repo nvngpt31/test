@@ -1,0 +1,10 @@
+---
+- hosts: prod
+  name: Install production facts 
+  
+  tasks:
+    - name: Install prod.fact
+      copy:
+        dest: /etc/ansible/facts.d/
+        src: prod.fact
+...

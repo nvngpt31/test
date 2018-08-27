@@ -1,0 +1,87 @@
+---
+- name: Setup (or teardown) the support infrastructure to manage systems
+  hosts: all 
+  force_handlers: yes
+  tasks:
+
+    - name: Create the user support as a member of the group wheel
+      user:
+        groups: wheel
+        name: support
+      tags:
+        - setup
+
+    - name: Remove the user support
+      user:
+        name: support
+        state: absent
+        remove: yes
+      tags:
+        - rollback
+
+    - name: Install the sudo configuration which allows passwordless execution of commands as root
+      copy:
+        src: support.sudo
+        dest: /etc/sudoers.d/support
+      tags:
+        - setup
+
+    - name: Remove the sudo configuration which allows passwordless execution of commands as root
+      file:
+        path: /etc/sudoers.d/support
+        state: absent
+      tags:
+        - rollback
+
+    - name: Install the ssh key
+      authorized_key:
+        manage_dir: yes
+        user: support
+        key: "{{ lookup('file', 'id_rsa.pub') }}" 
+      ignore_errors: yes
+      tags: 
+        - setup
+
+    - name: Limit ssh usage to members of the group wheel
+      lineinfile:
+        state: present
+        dest: /etc/ssh/sshd_config
+        line: AllowGroups wheel
+      tags:
+        - setup
+      notify: Restart the ssh daemon
+
+    - name: Unrestrict logins to sshd 
+      lineinfile:
+        state: absent
+        dest: /etc/ssh/sshd_config
+        line: AllowGroups wheel
+      notify: Restart the ssh daemon
+      tags:
+        - rollback
+
+    - name: Allow password authentication
+      lineinfile:
+        state: present
+        dest: /etc/ssh/sshd_config
+        line: PasswordAuthentication no
+      tags:
+        - setup
+      notify: Restart the ssh daemon
+
+    - name: Disallow password authentication
+      lineinfile:
+        state: absent
+        dest: /etc/ssh/sshd_config
+        line: PasswordAuthentication no
+      tags:
+        - rollback
+      notify: Restart the ssh daemon
+
+  handlers:
+
+    - name: Restart the ssh daemon
+      service:
+        name: sshd
+        state: restarted
+...

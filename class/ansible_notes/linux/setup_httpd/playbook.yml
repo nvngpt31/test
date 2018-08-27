@@ -1,0 +1,46 @@
+- name: Security harden the host
+  hosts: all
+  tasks:
+
+    - name: Update all software
+      yum:
+        name: '*'
+        state: latest
+        update_cache: yes
+
+    - name: Prevent root from logging in via ssh
+      lineinfile:
+        path: /etc/ssh/sshd_config
+        state: present
+        line: PermitRootLogin no
+
+    - name: Restart sshd
+      service:
+        name: sshd
+        state: restarted
+
+- name: Install httpd
+  hosts: webservers
+  tasks:
+
+    - name: Install httpd
+      yum:
+        name: httpd
+
+    - name: start httpd
+      service:
+        name: httpd
+        state: started
+        enabled: true
+
+    - name: Install sample content
+      copy:
+        dest: /var/www/html/index.html
+        content: "Hello World\n"
+
+    - name: Create firewall rules
+      firewalld:
+        service: http
+        state: enabled
+        immediate: true
+        permanent: true

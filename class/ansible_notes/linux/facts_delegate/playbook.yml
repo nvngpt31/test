@@ -1,0 +1,14 @@
+---
+- name: Testing fact delegation
+  hosts: all
+  tasks:
+    - name: Gather facts from {{ inventory_hostname }}
+      setup:
+      delegate_to: localhost
+      delegate_facts: true
+
+    - name: show ansible_hostname
+      debug:
+        msg: The value of the variable is {{ ansible_hostname }}
+
+...

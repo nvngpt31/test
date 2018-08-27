@@ -1,0 +1,49 @@
+---
+- name: Setup the support infrastructure to manage systems
+  hosts: all 
+  tasks:
+    - name: Create the user support as a member of the group wheel
+      user:
+        groups: wheel
+        name: support
+
+    - name: Install software typically not available in containers 
+      yum:
+        name: "{{ item }}"
+      with_items:
+          - sudo
+          - openssh-server
+          - systemd
+
+    - name: Install the sudo configuration which allows passwordless execution of commands as root
+      copy:
+        src: support.sudo
+        dest: /etc/sudoers.d/support
+
+    - name: Install the ssh key
+      authorized_key:
+        manage_dir: yes
+        user: support
+        key: "{{ lookup('file', 'id_rsa.pub') }}" 
+
+    - name: Limit ssh usage to members of the group wheel
+      lineinfile:
+        state: present
+        dest: /etc/ssh/sshd_config
+        line: AllowGroups wheel
+      notify: Restart the ssh daemon
+
+    - name: Disallow password authentication
+      lineinfile:
+        state: present
+        dest: /etc/ssh/sshd_config
+        line: PasswordAuthentication no
+      notify: Restart the ssh daemon
+
+  handlers:
+
+    - name: Restart the ssh daemon
+      service:
+        name: sshd
+        state: restarted
+...

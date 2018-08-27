@@ -1,0 +1,25 @@
+---
+    - name: Install the webserver software
+      yum: 
+        name: httpd 
+        state: installed
+
+    - name: Start and persistently enable httpd
+      service:
+        name: httpd
+        enabled: yes
+        state: started
+
+    - name: Open the port in the firewall
+      firewalld:
+        service: http
+        state: enabled
+        immediate: true
+        permanent: true
+
+    - name: Install sample content
+      copy:
+        content: "Hello world\n"
+        dest: /var/www/html/index.html
+
+...

@@ -1,0 +1,13 @@
+---
+- name: Create a user
+  hosts: webservers
+  gather_facts: no
+#  vars:
+#    - user1: fred
+
+  tasks:
+
+    - name: Create user {{ user1 }}
+      user:
+        name: "{{ user1 }}"
+...

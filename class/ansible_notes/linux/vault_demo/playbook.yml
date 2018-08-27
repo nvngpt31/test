@@ -1,0 +1,15 @@
+---
+- name: Create our bedrock world!
+  hosts: all
+  no_log: true
+  tasks:
+
+    - name: Include our variables
+      include_vars:
+        file: encrypted_data.yml
+
+    - name: Create users
+      user:
+        name: "{{ item.user }}"
+        password: "{{ item.pass | password_hash('sha512') }}"
+      with_items: "{{ bedrockers }}"

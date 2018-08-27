@@ -1,0 +1,23 @@
+---
+- name: Create users in the appropriate groups
+  hosts: all
+  tasks:
+
+    - name: Create groups
+      group:
+        name: "{{ item }}"
+      with_items:
+        - flintstones
+        - rubbles
+
+    - name: Create users in their appropriate groups
+      user:
+        name: "{{ item.name }}"
+        groups: "{{ item.groups }}"
+      with_items:
+        - { name: 'fred', groups: 'flintstones' }
+        - { name: 'wilma', groups: 'flintstones' }
+        - { name: 'barney', groups: 'rubbles' }
+        - { name: 'betty', groups: 'rubbles' }
+        
+...

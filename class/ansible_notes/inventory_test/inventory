@@ -1,0 +1,17 @@
+[webservers]
+servera.lab.example.com
+serverb.lab.example.com
+
+[dbservers]
+serverc.lab.example.com
+serverd.lab.example.com
+
+[devdc:children]
+webservers
+dbservers
+
+[everyone]
+server[a:d].lab.example.com
+
+[switches]
+192.168.[0:5].1

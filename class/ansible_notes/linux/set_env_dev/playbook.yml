@@ -1,0 +1,10 @@
+---
+- hosts: dev
+  name: Install development facts 
+  
+  tasks:
+    - name: Install dev.fact
+      copy:
+        dest: /etc/ansible/facts.d/
+        src: dev.fact
+...

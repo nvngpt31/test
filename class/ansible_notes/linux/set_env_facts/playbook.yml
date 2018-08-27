@@ -1,0 +1,17 @@
+---
+- hosts: all
+  name: Install environment facts 
+  
+  tasks:
+    - name: Install dev.fact
+      copy:
+        dest: /etc/ansible/facts.d/
+        src: dev.fact
+      when: inventory_hostname in groups['dev']
+
+    - name: Install prod.fact
+      copy:
+        dest: /etc/ansible/facts.d/
+        src: prod.fact
+      when: inventory_hostname in groups['prod']
+...

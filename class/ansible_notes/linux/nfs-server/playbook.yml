@@ -1,0 +1,30 @@
+---
+- name: Setup an NFS share called /share
+  hosts: all
+  tasks:
+
+    - name: Create the directory /share
+      file:
+        path: /share
+        state: directory
+
+    - name: Create the NFS export for /share
+      copy:
+        src: share.exportfs
+        dest: /etc/exports.d
+      notify: Restart the nfs-server
+
+    - name: Start and enable the NFS server
+      service:
+        name: nfs-server
+        state: started
+        enabled: yes
+
+  handlers:
+
+    - name: Restart the nfs-server
+      service:
+        name: nfs-server
+        state: restarted
+
+...
