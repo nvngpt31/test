@@ -1,36 +1,33 @@
-[kum394@devctlvpptapp02 play]$ cat pb1.yaml
 ---
 - name: Test install
   hosts: all
   become: true
-
+  
   vars:
-    somevar: "some test string"
-    somepkg: strace
+    somevar: "some test string" 
+    somepkg: strace 
 
-  pre_tasks:
+  pre_tasks: 
   - debug: msg="Started deployment. Current time is {{ansible_date_time.date}} {{ansible_date_time.time}}"
 
   tasks:
+  - import_tasks: rhel6.yaml 
+    when: ansible_distribution_major_version == '6'
+  - import_tasks: rhel7.yaml 
+    when: ansible_distribution_major_version == '7'
   - name: Install tree
     yum:
       name: tree
       state: present
     register: Output1
 
-  - name: Install mytree
-    yum:
-      name: tree
-      state: present
-    register: Output2
-
-  - name: Install with vars
+  - name: Install with vars 
     yum:
       name: "{{ somepkg }}"
       state: present
     register: Output3
 
-  - name: loop
+  - name: loop 
     debug:
       msg: "items here: {{ item }}"
     with_items:
@@ -38,9 +35,9 @@
       - "hello2"
       - "hello3"
 
-  - name: Install in loop
+  - name: Install in loop 
     yum:
-      name: "{{ item }}"
+      name: "{{ item }}" 
       state: present
     with_items:
       - "vim"
@@ -50,9 +47,9 @@
     group:
       name: "{{ item }}"
     loop:
-      - testgroup1
-      - testgroup2
-      - testgroup3
+      - testgroup1 
+      - testgroup2 
+      - testgroup3 
 
   - name: Configure file
     lineinfile:
@@ -60,10 +57,40 @@
       line: '*.* @192.168.102.215:514'
       state: present
 
-  - debug: msg="Task output- {{Output3}}"
+  - name: replace
+    copy:
+      content: "some test string"
+      dest: /var/tmp/punit/test/new1
+
+  - name: replace
+    replace:
+      path: /var/tmp/punit/test/new1
+      regexp: "some"
+      replace: "my"
+
+# Run command , save output and use the output later... 
+# Run command idempotent
+  - name: run a command 
+    shell: echo $(cat /etc/redhat-release | awk '{print $7}')
+    register: echo_content
+    changed_when: False
+
+  - name: check command
+    shell: echo "Ver checked as 7.3"
+    when: echo_content.stdout =="7.3"
+    register: out
+    changed_when: False
+  - debug: var=out.stdout
 
   post_tasks:
-  - debug: msg="Completed deployment. Current time is {{ansible_date_time.date}} {{ansible_date_time.time}}"
-  - debug: msg="Task output- {{Output1}}"
-  - debug: msg="Task output- {{Output2}}"
-  - debug: msg="Task output- {{Output3}}"
+  - debug: msg="Completed deployment. Current time is {{ansible_date_time.date}} {{ansible_date_time.time}}" 
+  - debug: msg="Task output- {{Output1}}" 
+  - debug: msg="Task output- {{Output3}}" 
+
+##########################
+# look in fact:
+# ansible devctlvpptapp03.iteclientsys.local -m setup > txt
+# when using commmand: module grep didn't work, used the shell
+# check or dry or noop
+# ansible-playbook fix_salt_agent.yaml --check
+#

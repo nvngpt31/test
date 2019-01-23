@@ -1,0 +1,21 @@
+  - name: run a command1
+    shell: echo $(grep -i env /etc/tda/env | cut -d"=" -f2)
+    register: echo_content1
+    changed_when: False
+
+  - name: check command1
+    shell: echo "It is dev"
+    when: echo_content1.stdout =="DEV"
+    register: out1
+    changed_when: False
+  - debug: var=out1.stdout
+
+  - name: check command1
+    copy:
+      src: files/test.ans
+      dest: /var/tmp/test.ans
+      owner: root
+      group: root
+      mode: 0644
+
+# next execute the curl with timeout to check if a host is blocked with firewall..

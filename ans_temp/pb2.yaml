@@ -1,0 +1,22 @@
+---
+- name: Test stuff
+  hosts: all
+  become: true
+  
+  tasks:
+
+  - name: find files
+    find:
+      paths: /var/tmp/punit/test
+      patterns: 'new*'
+      recurse: no
+    register: files_matched
+
+  - debug:
+      msg: "{{ files_matched.files[0].path }}"
+
+  - name: loop
+    debug:
+      msg: "items here: {{ item.path }}"
+    with_items: "{{ files_matched.files }}" 
+

@@ -1,0 +1,60 @@
+---
+- name: Test stuff
+  hosts: all
+  become: true
+  
+  tasks:
+
+  - name: run a command - check puppet
+    #command: echo $(cat /etc/redhat-release | awk '{print $7}')
+    command: ls /opt/puppetlabs/bin/puppet1
+    register: lspuppet 
+    changed_when: False
+    ignore_errors: yes
+
+  - debug:
+      msg: "{{ lspuppet.rc }}"
+
+  - name: check if already extracted 
+    command: ls /tmp/rpms 
+    register: rpms 
+    changed_when: False
+    ignore_errors: yes
+    when: lspuppet.rc != 0
+
+  - debug:
+      msg: "{{ rpms }}"
+
+  - name: extract 
+    shell: 'cd /tmp; tar -vxzf unitycm-installer.tar.gz' 
+    register: extract 
+    changed_when: False
+    ignore_errors: yes
+    when: rpms.rc != 0
+
+  - debug:
+      msg: "{{ extract }}"
+
+  - name: rhel6 install 
+    command: yum -y localinstall  /tmp/rpms/puppet-agent-5.4.0-1.el6.x86_64.rpm 
+    register: rhel6install 
+    changed_when: False
+    ignore_errors: yes
+    when: (lspuppet.rc != 0) and (ansible_distribution_major_version == "6")
+
+  - debug:
+      msg: "{{ rhel6install }}"
+
+  - name: rhel7 install 
+    command: yum -y localinstall  /tmp/rpms/puppet-agent-5.4.0-1.el7.x86_64.rpm
+    register: rhel7install 
+    changed_when: False
+    ignore_errors: yes
+    when: (lspuppet.rc != 0) and (ansible_distribution_major_version == "7")
+
+  - debug:
+      msg: "{{ rhel7install }}"
+
+# ls /opt/puppetlabs/bin/puppet
+#when: ansible_distribution_major_version == '7'
+# "stdout": "puppet-agent-5.4.0-1.el6.x86_64.rpm\npuppet-agent-5.4.0-1.el7.x86_64.rpm",

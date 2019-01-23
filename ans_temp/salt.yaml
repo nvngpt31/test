@@ -1,0 +1,41 @@
+---
+#salt fails to install if puppet executable is missing
+- name: Test stuff
+  hosts: all
+  become: true
+
+  tasks:
+
+  - name: salt-minion-2016.11.7 install
+    yum:
+      name: salt-minion-2016.11.7
+      state: present
+
+  - name: create config1
+    copy:
+      content: "id: {{ansible_fqdn}}"
+      dest: /etc/salt/minion.d/id.conf
+
+  - name: create config2
+    copy:
+      content: "master: prdtxlvpptapp03.associatesys.local"
+      dest: /etc/salt/minion.d/master.conf
+
+  - name: salt-minion service
+    service:
+      name: salt-minion
+      state: started
+
+#  - name: rhel7 install - jinja
+#    yum:
+#      name: python-jinja2-2.7.2
+#      state: present
+#    when: ansible_distribution_major_version == "7"
+#    when: ansible_distribution_major_version == "6"
+
+#  - name: rhel7 install - salt-minion
+#    yum:
+#      name: python-jinja2-2.7.2
+#      state: present
+#    when: ansible_distribution_major_version == "7"
+

@@ -1,0 +1,25 @@
+---
+- name: Test stuff
+  hosts: all
+  become: true
+  
+  tasks:
+
+  - name: run a command - check package
+    command: yum list python-crypto1 
+    register: lscrypto 
+    changed_when: False
+    ignore_errors: yes
+
+  - debug:
+      msg: "{{ lscrypto.rc }}"
+
+  - name: run a command - copy repo 
+    copy: yum list python-crypto1 
+    register: lscrypto 
+    changed_when: False
+    ignore_errors: yes
+
+  - debug:
+      msg: "{{ lscrypto.rc }}"
+

@@ -1,0 +1,29 @@
+---
+- name: Test 
+  hosts: all
+  become: true
+  
+  vars:
+    somevar: "some test string" 
+    somepkg: strace 
+
+  tasks:
+
+  - name: run a command 
+    #shell: $("curl  --connect-timeout 3 http://npectlvyumcl01.iteclientsys.local/yumrepos/mrepo/rhel-6-x86_64/RPMS.os/")
+    shell: 'curl -s --connect-timeout 3 http://npectlvyumcl01.iteclientsys.local/yumrepos/mrepo/rhel-6-x86_64/RPMS.os/'
+    register: echo_content
+    changed_when: False
+    args:
+      warn: false
+
+#  - name: check command
+#    shell: echo "Ver checked as 7.3"
+#    when: echo_content.stdout =="7.3"
+#    register: out
+#    changed_when: False
+#  - debug: var=out.stdout
+
+# curl --connect-timeout 3 http://npectlvyumcl01.npeclientaux.local/yumrepos/mrepo/rhel-6.5-x86_64-2014-Q4/RPMS.updates/repodata/repomd.xml
+# curl  --connect-timeout 3 http://npectlvyumcl01.iteclientsys.local/yumrepos/mrepo/rhel-7-x86_64/RPMS.os/
+#
