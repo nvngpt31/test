@@ -1,0 +1,391 @@
+#!/bin/ksh
+
+#set -x 
+
+#DATE_STAMP=`date +'%Y%m%d'`
+WORK_DIR=`pwd`
+PROG_NAME=`basename $0`
+OUTFILE=${WORK_DIR}/${PROG_NAME%%.*}.out
+
+
+NODE_NAME_INPUT=$1
+NODE_LIST=$2
+
+#-- must normalize it to lowercase if input nodename has uppper chars
+#echo "${NODE_NAME_INPUT}" | grep [A-Z] && echo "==> INPUT NODE_NAME: ${NODE_NAME_INPUT} contains UPPERCASE LETTER(s); will be lowercased"
+
+#-- quiet grep (-q)
+echo "${NODE_NAME_INPUT}" | grep -q [A-Z] && CASE_UP=yes || CASE_UP=no
+
+#-- check NODE_NAME 
+if [ ${CASE_UP} = "yes" ]
+then 
+	echo "==> INPUT NODE_NAME: ${NODE_NAME_INPUT} contains UPPERCASE LETTER(s); will be lowercased" | tee -a ${OUTFILE}
+	string="`echo ${NODE_NAME_INPUT} | grep -o [A-Z]`"
+	echo "${string}" | tr '\n' ' ' | sed "s/ $/\n/g" | sed "s/ //g" | tee -a ${OUTFILE}
+fi
+
+#-- normalized case
+NODE_NAME="`echo ${NODE_NAME_INPUT} | tr '[:upper:]' '[:lower:]'`"
+
+echo "==> NODE NAME: ${NODE_NAME}" | tee -a ${OUTFILE}
+
+#-- full name
+#LOCALHOST="`hostname -A | sed 's/^ *//g' | sed 's/ *$//g'`"
+#-- using short name
+LOCALHOST="`hostname -s`"
+
+ARCHIVE_DIR=${WORK_DIR}/ARCHIVE
+
+IMPACT_HOME=/opt/app/IBM/tivoli/impact
+IMPACT_ETC=${IMPACT_HOME}/etc
+
+NODE_NAME_SQLOUTFILE=${WORK_DIR}/${NODE_NAME}_sql.out	
+SEARCH_SQLFILE=${WORK_DIR}/search_${NODE_NAME}.sql
+SEARCH_NODE_COUNT=${WORK_DIR}/search_${NODE_NAME}.sql_count
+
+INSERT_SQLFILE=${WORK_DIR}/insert_${NODE_LIST}.sql
+
+
+_call_clearup_before()
+{
+for FILE in ${OUTFILE} ${NODE_NAME_SQLOUTFILE} ${SEARCH_SQLFILE} ${SEARCH_NODE_COUNT} ${INSERT_SQLFILE} 
+do
+	if [ -f ${FILE} ] || [ -f ${FILE}.bkup ]
+	then
+		rm ${FILE}
+	fi
+	#-- any bkup
+	if  [ -f ${FILE}.bkup ]
+	then
+		mv ${FILE}.bkup ${WORK_DIR}/ARCHIVE
+	fi
+done
+}
+
+_call_declare()
+{
+	echo "==> Input Number is: $#" | tee -a ${OUTFILE} 
+
+	if [ $# -eq 0 ]
+	then
+		echo -e "==> Check input: NODE_NAME NODE_LIST. Exit 1}" | tee -a ${OUTFILE}
+		exit 1
+	elif [ `echo ${NODE_NAME} | cut -c -3` =~ ^[A-Za-z]+[A-Za-z0-9]+.*$ ] || [ `echo ${NODE_NAME} | egrep "~|\[|\]|\*" | wc -l` -ge 1 ]
+	then
+		echo -e "==> Check input: NODE_NAME --> ${NODE_NAME}\n==> Cannot contain special characters. Exit 1" | tee -a ${OUTFILE}
+		exit 1
+	
+	elif [ ! -f ${NODE_LIST} ]
+	then
+		echo "==> Check Input NODE LIST file: ${NODE_LIST} does NOT exist, Exit 1" | tee -a ${OUTFILE}
+		exit 1
+	else
+		#-- input is good
+		#-- set backup to orig
+		cp ${NODE_LIST} ${NODE_LIST}.orig
+
+		echo "==> Sample NODE_NAME is: ${NODE_NAME}" | tee -a ${OUTFILE}
+		echo "==> Batch NODE_LIST is: ${NODE_LIST}" | tee -a ${OUTFILE}
+		cp ${NODE_LIST} ${NODE_LIST}.orig
+		#-- donot sort -d; use only -u to avoid dulp
+		sort -u ${NODE_LIST}.orig > ${NODE_LIST}
+		#-- remove sample node if exist in ${NODE_LIST}
+		sed -i "/^${NODE_NAME}$/d" ${NODE_LIST} 
+		echo "==> Total of Nodes in ${NODE_LIST}: `wc -l ${NODE_LIST} | awk '{print $1}'`" | tee -a ${OUTFILE}
+	fi
+	
+}
+
+
+#-- hard code IMPACT_SERVER_NAME
+_call_nci_dbname()
+{
+host=`hostname`
+case ${host} in
+        xxxxyz.*)
+                IMPACT_SERVER_NAME=MYTCT01
+                ;;
+        xxx01.*)
+                IMPACT_SERVER_NAME=MYTJC01
+                ;;
+	devxyz.*)
+                IMPACT_SERVER_NAME=DEVMYT01
+                ;;
+	bbbbbb02.*)
+                IMPACT_SERVER_NAME=DEVMYT02
+                ;;
+
+        npexyz.*)
+                IMPACT_SERVER_NAME=MYTNPE01
+                ;;
+        *)
+                IMPACT_SERVER_NAME=""
+                echo "==> NO IMPACT_SERVER_NAME avaiable" | tee -a ${OUTFILE}
+                exit 1
+                ;;
+esac
+}
+
+_call_check_server_name()
+{
+	#-- check header of _ReportsHSQLDB.ds to get the instance name
+	#IMPACT_SERVER_NAME="`ls ${IMPACT_HOME}/etc | grep \"_ReportsHSQLDB\.ds\" | egrep -vi \"backup|old\"| awk -F'_' '{print $1}'`"
+	IMPACT_SERVER_NAME="`ls ${IMPACT_HOME}/etc | grep \"_ImpactDB\.ds\" | egrep -vi \"backup|old\"| awk -F'_' '{print $1}'`"
+	echo "==> Impact Server Name is: ${IMPACT_SERVER_NAME}" | tee -a ${OUTFILE}
+}
+
+#-- select sever count in MWM
+_call_select_count()
+{
+	#-- clear up orphane file
+	if [ -f ${SEARCH_NODE_COUNT} ]
+	then
+		rm ${SEARCH_NODE_COUNT}
+	fi
+
+	echo "connect 'jdbc:derby://${LOCALHOST}:1527/ImpactDB;user=impact;mycre=some';" >> ${SEARCH_NODE_COUNT}
+
+	echo "select COUNT(MWID) from mm_windows where filterstat like '%${NODE_NAME}%';" >> ${SEARCH_NODE_COUNT}
+
+	echo "exit;" >> ${SEARCH_NODE_COUNT}
+
+	${IMPACT_HOME}/bin/nci_db connect -sqlfile ${SEARCH_NODE_COUNT} >${SEARCH_NODE_COUNT}_out
+	COUNT=`sed -n '/-----------/,+1p' ${SEARCH_NODE_COUNT}_out| sed '/-----------/d'`
+	echo "==> Search ${NODE_NAME} count is: ${COUNT}"
+	rm ${SEARCH_NODE_COUNT}_out
+}
+
+_call_search_node_data()
+{
+	echo "==> Search ${NODE_NAME} data:"
+	echo "connect 'jdbc:derby://${LOCALHOST}:1527/ImpactDB;user=impact;mycre=some';" >> ${SEARCH_SQLFILE}
+	echo "select FILTERSTAT,WINTYPE,OT_STARTTIME,EOT_STARTTIME,OT_ENDTIME,EOT_ENDTIME,TIMEZONE,ACTIVATED from mm_windows where filterstat like '%${NODE_NAME}%';" >> ${SEARCH_SQLFILE}
+
+	echo "exit;" >> ${SEARCH_SQLFILE}
+
+	${IMPACT_HOME}/bin/nci_db connect -sqlfile ${SEARCH_SQLFILE} | grep "(Node" | tee -a ${OUTFILE} 
+
+}
+
+_call_check_server_in_mwm()
+{
+	if [ ${COUNT} -eq 0 ]
+	then
+		#-- not found, exit
+		echo -e "==> ${NODE_NAME} is NOT found in MWM.\n==> Exit 1" | tee -a ${OUTFILE}
+		exit 1
+	
+	elif [ ${COUNT} -ge 2 ]
+	then
+		#-- more than 1; exit
+		echo -e "==> ${NODE_NAME} has MORE than 1 data in MWM\n==> Check the data again." | tee -a ${OUTFILE}
+		_call_search_node_data
+		exit 1
+	
+	elif [ ${COUNT} -eq 1 ]
+	then
+		echo -e "==> ${NODE_NAME} has 1 data in MWM\n==> Check the data now." | tee -a ${OUTFILE}
+		_call_search_node_data
+
+	else
+		echo "==> Something strange about ${NODE_NAME}\n==> Check the sql syntax again." | tee -a ${OUTFILE}
+		exit 1
+
+	fi
+}
+
+_call_select()
+{
+        if [ -f ${SEARCH_SQLFILE} ]
+        then
+                echo "==> ${SEARCH_SQLFILE} is created." | tee -a ${OUTFILE}
+
+               	${IMPACT_HOME}/bin/nci_db connect -sqlfile ${SEARCH_SQLFILE} > ${NODE_NAME_SQLOUTFILE}
+
+                if [ -f ${NODE_NAME_SQLOUTFILE} ]
+                then
+                        echo -e "==> Check ${NODE_NAME_SQLOUTFILE}\n==> ls -ltra ${NODE_NAME_SQLOUTFILE}\n`ls -ltra ${NODE_NAME_SQLOUTFILE}" | tee -a ${OUTFILE}
+                else
+                        echo "==> ${NODE_NAME_SQLOUTFILE} is NOT created.\n==> Check ${OUTFILE} for error." | tee -a ${OUTFILE}
+                fi
+        else
+                echo -e "==> search_${NODE_NAME}.sql is NOT created. Exit 1" | tee -a ${OUTFILE}
+                exit 1
+        fi
+}
+
+#-- Create sql file for node list
+_call_seednode_sql_outfile()
+{
+	#-- parse outfile 
+	if [ -f ${NODE_NAME_SQLOUTFILE} ]
+	then
+
+		#-- no good; may exclude node name containing sql,select, ij
+		#NODE_NAME_NUM=`grep "${NODE_NAME}" ${NODE_NAME_SQLOUTFILE}| egrep -iv "select|ij|sql" | wc -l`
+
+		#-- Must contain (Node like or (Node =
+		NODE_NAME_NUM=`grep "${NODE_NAME}" ${NODE_NAME_SQLOUTFILE}| grep "^(Node " |wc -l `
+
+		
+		echo "==> NODE_NAME_NUM is: ${NODE_NAME_NUM}" | tee -a ${OUTFILE}
+
+		if [ ${NODE_NAME_NUM} -eq 0 ]
+		then
+			echo -e "==> ${NODE_NAME} data NOT found in MWM.\n==> Exit 1" | tee -a ${OUTFILE}
+			grep -i "ERROR" ${NODE_NAME_SQLOUTFILE}
+			SEEDNODE_STATUS="bad"
+			exit 1
+
+		elif [ ${NODE_NAME_NUM} -gt 1 ]
+		then
+			echo -e "==> ${NODE_NAME} has MORE than 1 data in MWM:  ${NODE_NAME_NUM}\n==> Exit 1" | tee -a ${OUTFILE}
+			grep "${NODE_NAME}" ${NODE_NAME_SQLOUTFILE}
+			SEEDNODE_STATUS="bad"
+			exit 1
+
+		elif [  -z ${NODE_NAME_NUM} ]
+		then
+			echo -e "==> ${NODE_NAME} has NULL data in MWM:  ${NODE_NAME_NUM}\n==> Exit 1" | tee -a ${OUTFILE}
+			grep "${NODE_NAME}" ${NODE_NAME_SQLOUTFILE}
+			SEEDNODE_STATUS="bad"
+			cat ${NODE_NAME_SQLOUTFILE}
+			exit 1
+		else
+			#NODE_NAME_DATA="`grep \"${NODE_NAME}\" ${NODE_NAME_SQLOUTFILE}| egrep -iv \"select|ij|sql\"`"
+			NODE_NAME_DATA="`grep \"${NODE_NAME}\" ${NODE_NAME_SQLOUTFILE}| grep \"^(Node \"`"
+			if [ ! -z ${NODE_NAME_DATA} ]
+			then
+				FILTERSTAT="`echo \"${NODE_NAME_DATA}\" | awk -F'|' '{print $1}'| sed 's/^ *//g' | sed 's/ *$//g'`"
+				WINTYPE="`echo \"${NODE_NAME_DATA}\"  | awk -F'|' '{print $2}' | sed 's/^ *//g' | sed 's/ *$//g'`"
+				OT_STARTTIME="`echo \"${NODE_NAME_DATA}\"  | awk -F'|' '{print $3}' | sed 's/^ *//g' | sed 's/ *$//g'`"
+				EOT_STARTTIME="`echo \"${NODE_NAME_DATA}\"  | awk -F'|' '{print $4}' | sed 's/^ *//g' | sed 's/ *$//g'`"
+				OT_ENDTIME="`echo \"${NODE_NAME_DATA}\"  | awk -F'|' '{print $5}' | sed 's/^ *//g' | sed 's/ *$//g'`"
+				EOT_ENDTIME="`echo \"${NODE_NAME_DATA}\"  | awk -F'|' '{print $6}' | sed 's/^ *//g' | sed 's/ *$//g'`"
+				TIMEZONE="`echo \"${NODE_NAME_DATA}\"  | awk -F'|' '{print $7}' | sed 's/^ *//g' | sed 's/ *$//g'`"
+				ACTIVATED="`echo \"${NODE_NAME_DATA}\"  | awk -F'|' '{print $8}' | sed 's/^ *//g' | sed 's/ *$//g'`"
+			
+				echo "==> FILTERSTAT is: ${FILTERSTAT}" | tee -a ${OUTFILE}
+				echo "==> WINTYPE is: ${WINTYPE}" | tee -a ${OUTFILE}
+				echo "==> OT_STARTTIME is: ${OT_STARTTIME}" | tee -a ${OUTFILE}
+				echo "==> EOT_STARTTIME is: ${EOT_STARTTIME}" | tee -a ${OUTFILE}
+				echo "==> OT_ENDTIME is: ${OT_ENDTIME}" | tee -a ${OUTFILE}
+				echo "==> EOT_ENDTIME is: ${EOT_ENDTIME}" | tee -a ${OUTFILE}
+				echo "==> TIMEZONE is: ${TIMEZONE}" | tee -a ${OUTFILE}
+				echo "==> ACTIVATED is: ${ACTIVATED}" | tee -a ${OUTFILE}
+			
+				SEEDNODE_STATUS="good"
+			else
+				echo "==> NODE_NAME_DATA has no data" | tee -a ${OUTFILE}	
+				SEEDNODE_STATUS="bad"
+			fi
+				echo "==> SEEDNODE_STATUS is: ${SEEDNODE_STATUS}" | tee -a ${OUTFILE}
+
+		fi
+	else
+		echo "==> ${NODE_NAME_SQLOUTFILE} not created" | tee -a ${OUTFILE}
+	fi
+	echo "==> SEEDNODE_STATUS is: ${SEEDNODE_STATUS}" | tee -a ${OUTFILE}
+}
+
+#-- Create sql file for node list
+_call_create_node_list_sql()
+{
+	if [ -f ${NODE_NAME_SQLOUTFILE} ] && [ ${SEEDNODE_STATUS} = "good" ]
+	then
+		#-- create insert.sql
+		#cat ${NODE_LIST} | egrep -iv "#|^$" | while read NODE
+		#-- insert
+		#-- insert into mm_windows (filterstat,wintype,ot_starttime,eot_starttime,ot_endtime,eot_endtime, timezone) values('(Node like ".*npe_cynthia.*")',1,'2016-11-23 09:36:00.0',1479915360,'2017-01-23 23:59:59.0',1485237599,'CST');
+		#exit;
+		#-- exclude sample node to avoid dulp
+
+		#-- connect to ij
+		echo "connect 'jdbc:derby://${LOCALHOST}:1527/ImpactDB;user=me;mycre=some';" | tee -a ${INSERT_SQLFILE}
+		cat ${NODE_LIST} | egrep -iv "#|^$" | grep -vi "^${NODE_NAME}$" | tr '[:upper:]' '[:lower:]' |  while read NODE
+		do
+			echo "==> NODE is: ${NODE}"
+			#-- direct to file to avoid grep: Trailing backslash
+			#-- Derby cannot take \
+			echo ${NODE} | egrep "\*|\{|\}|\\\\" | wc -l >${NODE}_check_char 
+			NODE_SPECIAL_CHAR_NUM=`cat ${NODE}_check_char`
+			rm ${NODE}_check_char
+
+			if [ ${NODE_SPECIAL_CHAR_NUM} -ge 1 ]
+			then
+				echo -e "==> Invalid/Bad Entery: ${NODE} contains ASTERISK *" | tee -a ${OUTFILE}
+			else
+				echo -e "==> Good Entery: ${NODE}"  | tee -a ${OUTFILE}
+				echo "insert into mm_windows (filterstat,wintype,ot_starttime,eot_starttime,ot_endtime,eot_endtime, timezone) values('(Node like \".*${NODE}.*\")',${WINTYPE},'${OT_STARTTIME}',${EOT_STARTTIME},'${OT_ENDTIME}',${EOT_ENDTIME},'${TIMEZONE}');" | tee -a ${INSERT_SQLFILE}
+		
+			fi
+		done
+		echo "exit;" | tee -a ${INSERT_SQLFILE}
+
+	fi
+
+}
+
+#-- insert to MWM DB using sql file
+_call_insert_node_list()
+{
+	if [ -f ${INSERT_SQLFILE} ]
+	then
+		echo "==> INSERT_SQLFILE is: ${INSERT_SQLFILE}" | tee -a >> ${OUTFILE} | tee -a ${OUTFILE}
+		echo "==> INSERT BATCH SERVERS and VIPs now...." | tee -a ${OUTFILE}
+		${IMPACT_HOME}/bin/nci_db connect -sqlfile ${INSERT_SQLFILE} > ${INSERT_SQLFILE}.out
+		cat ${INSERT_SQLFILE}.out | tee -a ${OUTFILE}	
+		rm ${INSERT_SQLFILE}.out
+		echo "==> execute return: $?" | tee -a ${OUTFILE}
+	else
+		echo  -e "==> INSERT_SQLFILE ${INSERT_SQLFILE} is NOT created\n==> Exit 2"
+		exit 2
+	fi
+}
+
+#-- clearup and put them in ARCHIVE
+_call_clearup_after()
+{
+	FILE_LIST="${NODE_LIST} ${NODE_LIST}.orig ${NODE_NAME_SQLOUTFILE} ${SEARCH_SQLFILE} ${SEARCH_NODE_COUNT} ${INSERT_SQLFILE} ${OUTFILE}"
+
+	if [ -d ${ARCHIVE_DIR} ]
+	then
+
+		echo "==> Move files to ARCHIVE...." | tee -a ${OUTFILE}
+		for MV_FILE in ${FILE_LIST} 
+		do
+			if [ -f ${MV_FILE} ]
+			then
+				mv ${FILE_LIST} ${ARCHIVE_DIR}
+			fi
+		done
+	fi
+}
+	
+
+#-------------
+#-- MAIN
+#-------------
+
+_call_clearup_before
+
+_call_declare ${NODE_NAME} ${NODE_LIST}
+
+_call_check_server_name
+
+_call_select_count
+
+_call_check_server_in_mwm
+
+_call_select
+
+_call_seednode_sql_outfile
+
+_call_create_node_list_sql
+
+_call_insert_node_list
+
+_call_clearup_after
+
+exit $?
