@@ -1,0 +1,24 @@
+ 
+# |2019-05-01 18:45:00.0        |1556754300 |2019-05-02 00:00:00.0        |1556773200 |CST 
+
+# Date to epoch
+# date -d '05/01/2019 18:45:00' +"%s"
+# date -d '05/02/2019 00:00:00' +"%s"
+
+
+# epoch to date 
+# date -d@"1556754300"
+#   Above show:  Wed May  1 18:45:00 CDT 2019
+
+start_date="06/01/2019 18:45:00"
+end_date="06/01/2019 18:45:00"
+
+epo_st_date=`date -d '06/01/2019 18:45:00' +"%s"`
+echo "epoch: $epo_st_date" 
+
+mydate=`date -d@"$epo_st_date"`
+echo "date: $mydate" 
+
+# Insert ran as below:
+# insert into mytab (filterstat,wintype,ot_starttime,eot_starttime,ot_endtime,eot_endtime, timezone) values('(Node like ".*mysername.*")',1,'2019-04-05 18:45:00.0',1554507900,'2019-04-06 00:00:00.0',1554526800,'CST');
+#
