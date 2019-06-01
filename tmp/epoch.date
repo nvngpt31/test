@@ -1,24 +1,33 @@
- 
+
 # |2019-05-01 18:45:00.0        |1556754300 |2019-05-02 00:00:00.0        |1556773200 |CST 
 
 # Date to epoch
 # date -d '05/01/2019 18:45:00' +"%s"
 # date -d '05/02/2019 00:00:00' +"%s"
 
-
 # epoch to date 
 # date -d@"1556754300"
 #   Above show:  Wed May  1 18:45:00 CDT 2019
-
+###############################################################
 start_date="06/01/2019 18:45:00"
-end_date="06/01/2019 18:45:00"
+end_date="06/02/2019 00:00:00"
 
-epo_st_date=`date -d '06/01/2019 18:45:00' +"%s"`
-echo "epoch: $epo_st_date" 
+epo_start=`date -d "$start_date" +"%s"`
+epo_end=`date -d "$end_date" +"%s"`
 
-mydate=`date -d@"$epo_st_date"`
-echo "date: $mydate" 
+human_start=`date -d @"$epo_start" +'%Y-%m-%d %H:%M:%S'`".0"
+human_end=`date -d @"$epo_end" +'%Y-%m-%d %H:%M:%S'`".0"
 
-# Insert ran as below:
+echo "Start: $human_start  $epo_start" 
+echo "End: $human_end   $epo_end" 
+
+# Insert as below:
 # insert into mytab (filterstat,wintype,ot_starttime,eot_starttime,ot_endtime,eot_endtime, timezone) values('(Node like ".*mysername.*")',1,'2019-04-05 18:45:00.0',1554507900,'2019-04-06 00:00:00.0',1554526800,'CST');
 #
+
+echo ""
+echo "insert into mytab (filterstat,wintype,ot_starttime,eot_starttime,ot_endtime,eot_endtime, timezone) values('(Node like ".*mysername.*")',1,'2019-04-05 18:45:00.0',1554507900,'2019-04-06 00:00:00.0',1554526800,'CST');"
+
+echo ""
+echo "updated"
+echo "insert into mytab (filterstat,wintype,ot_starttime,eot_starttime,ot_endtime,eot_endtime, timezone) values('(Node like ".*mysername.*")',1,'$human_start',$epo_start,'$human_end',$epo_end,'CST');"
