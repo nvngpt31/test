@@ -1,1 +1,0 @@
-clear ; curl -s -k -u ucmadmin:unity2018 -H Content-Type:application/json -H Accept:application/json https://ucmnui.associatesys.local/api/v2/hosts/devctlvpptapp11.iteclientsys.local/parameters | python -m json.tool

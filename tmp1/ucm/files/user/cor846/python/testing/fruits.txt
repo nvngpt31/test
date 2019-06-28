@@ -1,6 +1,0 @@
-orange
-red    apple
-green  apple
-mango
-red    pear
-dragon fruit

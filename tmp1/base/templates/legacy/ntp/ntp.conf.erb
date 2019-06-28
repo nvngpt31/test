@@ -1,8 +1,0 @@
-# This file is managed in the "base" data module in Bitbucket
-driftfile /var/lib/ntp/drift
-server ntp-<%= @building %>-<%= @orientation %>-1.<%= @ntpdomain %>
-server ntp-<%= @building %>-<%= @orientation %>-2.<%= @ntpdomain %>
-server ntp-<%= @building %>-<%= @orientation %>-3.<%= @ntpdomain %>
-# Local users may interrogate the ntp server more closely.
-restrict default kod nomodify notrap nopeer noquery
-restrict 127.0.0.1

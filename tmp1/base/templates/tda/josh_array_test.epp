@@ -1,4 +1,0 @@
-### puppet stuff
-#
-
-<%= scope.lookupvar('tda::josh_array_test') %>

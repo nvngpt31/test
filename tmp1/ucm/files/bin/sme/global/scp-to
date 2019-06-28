@@ -1,8 +1,0 @@
-#!/bin/bash 
-
-  file=$1
-  server=$2
-  dest=$3
-  
-  scp -o -o "PasswordAuthentication=no" -o "StrictHostKeyChecking=no" $file ${server}:${dest}
-

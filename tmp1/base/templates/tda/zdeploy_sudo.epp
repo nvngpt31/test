@@ -1,4 +1,0 @@
-Defaults:zdeploy !requiretty
-zdeploy ALL=(tomcat) NOPASSWD: ALL
-zdeploy ALL=(spring) NOPASSWD: ALL
-

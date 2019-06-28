@@ -1,8 +1,0 @@
-#!/bin/bash
-  clear
-  echo "...Git fetching"
-  git fetch -a -p  
-  echo ""
-  echo "...Git Pulling current branch"
-  git pull origin `tgit -b` 
-  

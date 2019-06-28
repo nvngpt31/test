@@ -1,6 +1,0 @@
-######################################################################################
-## Contents of this file are managed by UCM/Puppet, you should not edit it manually ##
-######################################################################################
-%ulse   ALL=(ALL)   ALL
-zcyberarkunix ALL=(root) /usr/bin/passwd root
-

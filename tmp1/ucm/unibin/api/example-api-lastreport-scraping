@@ -1,2 +1,0 @@
-clear ; curl -s -k -u ucmadmin:unity2018 -H Content-Type:application/json -H Accept:application/json https://ucmnui.associatesys.local/api/v2/hosts/devctlsdmyhad01.pteassociatesys.local/config_reports/last | python -m json.tool | egrep -i '(source|message)' | sed '/^\s*$/d ; s/^[ \t]*//' |  egrep -vi '("message": {|"source": {)' | egrep -i '(would|should|ucm|current_value|\@)'
-

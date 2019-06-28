@@ -1,2 +1,0 @@
-## TDA Setup to redirect syslog to arcsight
-*.* @arcjcuxlog01.associatesys.local:1514

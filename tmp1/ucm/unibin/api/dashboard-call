@@ -1,3 +1,0 @@
-#!/bin/bash
-
-  curl -s -k -u ucmadmin:unity2018 -H Content-Type:application/json -H Accept:application/json https://ucmnui.associatesys.local/api/v2/dashboard | python -m json.tool

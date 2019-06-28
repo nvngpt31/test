@@ -1,5 +1,0 @@
----
-apps:
-  'veoazk':
-    ensure: 'present'
-    platform: 'springboot'

@@ -1,5 +1,0 @@
-#!/bin/bash
-
-  # A hack script, ofcourse
-  cp /tmp/unitycm-installer/ucm/files/conf/epel-clientsys.repo /etc/yum.repos.d/
-  

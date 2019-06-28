@@ -1,5 +1,0 @@
----
-apps:
-  'veoaas':
-    ensure: 'present'
-    platform: 'springboot'

@@ -1,7 +1,0 @@
-#!/bin/bash
-
-  if [[ -z $1 ]] 
-  then echo "... please provide a manifest file to check"
-       exit 1
-  else puppet parser validate $1
-  fi 
