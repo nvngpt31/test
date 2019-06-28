@@ -1,0 +1,2 @@
+this is a test file
+this host is <%= @hostname %>

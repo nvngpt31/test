@@ -1,0 +1,254 @@
+#!/bin/bash
+
+
+
+  echo "================================================================================="
+  echo "Unity Configuration Management PRE Installer"
+  echo "================================================================================="
+  echo ""
+
+  if [[ -f /etc/facter/facts.d/unitycm_installer_ran.txt ]]
+  then echo "... already ran UCM installer."
+       exit 0
+  fi 
+
+  source /etc/tda/env
+  mydomain="`hostname -f | awk -F '.' '{print $2}'`"
+  current_buildserver="$BUILDSERVER"
+  dir_ucm_workdir='/var/ucm'
+
+  mkdir -p ${dir_ucm_workdir}/flags
+
+  if [[ -z $mydomain ]]
+  then fqdnmissing='true'
+  fi
+
+  if cat /etc/redhat-release | grep -q '7'
+  then el='7'
+  else el='6'
+  fi
+
+  case $mydomain in
+    'iteclientsys')    is_nonproduction='true'  ;;
+    'pteassociatesys') is_nonproduction='true'  ;;
+    'npeclientaux')    is_nonproduction='true'  ;;
+    'npeassociateaux') is_nonproduction='true'  ;;
+    'clientsys')       is_nonproduction='false' ;;
+    'associatesys')    is_nonproduction='false' ;;
+    'clientaux')       is_nonproduction='false' ;;
+    'associateaux')    is_nonproduction='false' ;;
+  esac
+
+  # --------------------------------------------------------------
+  mkdir -p $dir_ucm_workdir
+  if [[ ! -d ${dir_ucm_workdir}/yumbackup ]]
+  then echo "backing up yum repos to ${dir_ucm_workdir}/yumbackup "
+       mkdir -p ${dir_ucm_workdir}/yumbackup
+       cp -rp /etc/yum.repos.d/* ${dir_ucm_workdir}/yumbackup
+       mv /etc/yum.repos.d/puppet* ${dir_ucm_workdir}/yumbackup
+  fi
+
+  # --------------------------------------------------------------
+  yum makecache > /dev/null 2>&1
+  if [[ $? = '0' ]]
+  then makecache_good='true'
+  else makecache_good='false'
+  fi
+
+  # echo "domain:           \"${mydomain}\""
+  # echo "is_nonproduction: \"${is_nonproduction}\""
+  # echo "makecache_good:   \"${makecache_good}\""
+  # echo ""
+
+  # --------------------------------------------------------------
+  if [[ $makecache_good = 'false' ]]
+  then echo "... failed to make yum cache on `hostname -f` `hostname` "
+       echo "---------------------------------------------------------"
+       echo ""
+       yum makecache
+       echo ""
+       exit 1
+  fi
+
+  # --------------------------------------------------------------
+#  rpm -qa | grep -q 'salt'
+#  if [[ $? != '0' ]]
+#  then
+#    echo "" ; echo ;
+#    echo "... installing salt package"
+#    echo "---------------------------------------------------------"
+#    echo ""
+#    yum install -y salt
+#
+#    if [[ $? != '0' ]]
+#    then echo ""
+#         echo "... failed to install salt on `hostname -f` `hostname`"
+#         exit 1
+#    fi
+#
+#  fi
+
+  # --------------------------------------------------------------
+  if [[ ! -f ${dir_ucm_workdir}/flags/removed-old-puppet.txt ]]
+  then
+
+    echo "" ; echo ;
+    echo "... removing old puppet"
+    echo "---------------------------------------------------------"
+    echo ""
+
+    if [[ ! -d ${dir_ucm_workdir}/puppetbackups ]]
+    then mkdir -p ${dir_ucm_workdir}/puppetbackups
+         mv /etc/mcollective/ /etc/facter/ /etc/puppet* /var/lib/peadmin/ ${dir_ucm_workdir}/puppetbackups/ >/dev/null 2>&1
+         mkdir -p ${dir_ucm_workdir}/puppetbackups/oss-var-lib-puppet/
+         mv /var/lib/puppet ${dir_ucm_workdir}/puppetbackups/oss-var-lib-puppet/ >/dev/null 2>&1
+    fi
+
+    yum remove -y mcollective pe-mcollective pe-puppet puppet pe-agent facter ruby
+
+    if [[ $? = '0' ]]
+    then touch ${dir_ucm_workdir}/flags/removed-old-puppet.txt
+    else echo "... failed to remove old puppet rpms on `hostname -f` `hostname`"
+         exit 1
+    echo ""
+    fi
+
+  fi
+
+  # --------------------------------------------------------------
+  if [[ ! -f ${dir_ucm_workdir}/flags/p5installed.txt ]]
+  then
+
+    ls -l /tmp/rpms/puppet-agent-5.4.0-1.el${el}.x86_64.rpm >/dev/null 2>&1
+    if [[ $? != '0' ]]
+    then echo "... failed to find rpm /tmp/rpms/puppet-agent-5.4.0-1.el${el}.x86_64.rpm"
+         exit 1
+    fi
+
+    yum localinstall -y /tmp/rpms/puppet-agent-5.4.0-1.el${el}.x86_64.rpm
+    if [[ $? != '0' ]]
+    then echo "failed to local install /tmp/rpms/puppet-agent-5.4.0-1.el${el}.x86_64.rpm"
+         exit 1
+    else touch ${dir_ucm_workdir}/flags/p5installed.txt
+    fi
+
+  fi
+
+
+  # ================================================================= 
+ 
+  echo "================================================================================="
+  echo "Unity Configuration Management Installer"
+  echo "================================================================================="
+  echo ""
+ 
+  # THIS SCRIPT ASSUMES THE BUILDSERVER IS CORRECT
+  # BTW, DEST IS SHORT FOR DESTINATION
+  # BTW, FMT IS SHORT FOR FORMAT
+  if [[ -f /root/tdaenv.new ]] 
+  then source /root/tdaenv.new
+  else source /etc/tda/env
+       buildserver=$BUILDSERVER
+  fi 
+  sname="`uname -n`"
+  fqdn="`host $sname | awk '{print $1}'`"
+  moddir="/etc/puppetlabs/code/environments/production/modules/"
+  url="http://$buildserver"
+  path_repomucm="nonpackaged/ucm"
+  url_p5='https://yum.puppetlabs.com/puppet5'
+  dirssl='/etc/puppetlabs/puppet/ssl'
+
+  # PUPPET CONF STUFF FOR GET FUNCTION
+  p5conf="${path_repomucm}/p5-pconf"
+  puppetconf="/etc/puppetlabs/puppet/puppet.conf"
+  destucm='/usr/local/bin/ucm'
+  grabucm="${path_repomucm}/ucm"
+
+  # ================================================================= 
+  fmt () {
+    echo ""
+  } 
+
+  fmttop () {
+    echo "$line"
+  }
+
+  fmtdouble () {
+    echo "" ; echo "" 
+  } 
+
+  fnyuminstall () {
+    pkg=$1
+    fmt
+    echo "... installing package \"${pkg}\""
+    yum install -y $pkg
+    fmt
+  }
+
+  mkfact () {
+    fmt
+    name="$1"
+    value="$2"
+    echo "... creating fact \"${name}\" with value \"${value}\" "
+    mkdir -p /etc/facter/facts.d
+    echo "${name}=${value}" > /etc/facter/facts.d/${name}.txt
+    fmt
+  }
+
+  fnpapply () {
+    class="$1"
+    echo "... running puppet class \"${class}\""
+    puppet apply -t -e "include ${class}"
+    fmt
+  }
+  
+  fnagent () {
+    class=$1
+    if [[ -z $class ]] 
+    then puppet agent -t 
+    else puppet agent -t --tags $class
+    fi 
+  }
+
+  # ================================================================= 
+
+  # INSTALL GIT
+  rpm -qa | grep -q git
+  if [[ $? != '0' ]] 
+  then fnyuminstall git
+  fi 
+
+  # MAKE SOFT LINKS 
+  for i in `ls -1 /opt/puppetlabs/bin/` 
+  do cd /usr/local/bin/ && rm -f ${i} >/dev/null 2>&1
+     cd /usr/local/bin/ && ln -s /opt/puppetlabs/bin/${i} >/dev/null 2>&1 
+  done
+
+  # SET SALT FACTS
+#  mkfact salt_server prdtxlvpptapp03.associatesys.local
+#  mkfact salt_manage true 
+
+  # UPDATE PUPPET CONF
+  cp $puppetconf /var/ucm/puppetbackups/p5-puppetconf-stock
+  cp /tmp/unitycm-installer/ucm/files/conf/p5-pconf $puppetconf
+  echo "... updating puppet conf"
+  sed -i "s/MYFQDN/${fqdn}/g" $puppetconf 
+  fmt
+
+  # UNTAR SALT
+#  echo "... untarring salt tarball" 
+#  cp /tmp/salt.tar.gz $moddir
+#  cd $moddir && tar -xzf salt.tar.gz
+  rm -f salt.tar.gz
+
+  # APPLY SALT MANIFEST
+#  fnpapply salt
+
+  # RUN AGENT
+  fnagent 
+      
+  mkfact unitycm_installer_ran true
+
+  mkfact smeucmtool null
+  cp /tmp/unitycm-installer/ucm/files/bin/sme/ucm $destucm
+  chmod +x $destucm

@@ -1,0 +1,43 @@
+#!/bin/bash
+
+ while (( "$#" ))
+  do case $1 in
+       -e|--env) shift && env="$1"  ;;
+     esac
+     shift
+  done
+
+  if [[ -z $env ]]
+  then echo "... please provide env with -e"
+       exit 1
+  fi 
+
+  moddir="/etc/puppetlabs/code/environments/${env}/modules"
+
+  repos='
+    zgitlab@git-ct-af-1.associatesys.local:tools/stdlib.git
+    zgitlab@git-ct-af-1.associatesys.local:ulse/ntp.git
+    zgitlab@git-ct-af-1.associatesys.local:mweng/tda_tcserver.git
+    zgitlab@git-ct-af-1.associatesys.local:ngoms/tda_springboot.git
+    zgitlab@git-ct-af-1.associatesys.local:ngoms/mongodb.git
+    zgitlab@git-ct-af-1.associatesys.local:ngoms/artifactory.git
+    zgitlab@git-ct-af-1.associatesys.local:ngoms/ngoms_java.git
+    zgitlab@git-ct-af-1.associatesys.local:ngoms/ngoms_apache.git
+    zgitlab@git-ct-af-1.associatesys.local:ngoms/tda_java.git
+    zgitlab@git-ct-af-1.associatesys.local:ngoms/omsweb.git
+    zgitlab@git-ct-af-1.associatesys.local:ngoms/ngoms.git
+    zgitlab@git-ct-af-1.associatesys.local:ngoms/orsapp.git
+    zgitlab@git-ct-af-1.associatesys.local:ngoms/orsappxl.git
+    zgitlab@git-ct-af-1.associatesys.local:ngoms/ouiapp.git
+    zgitlab@git-ct-af-1.associatesys.local:ngoms/ouiweb.git
+    ssh://git@bitbucket.associatesys.local/sme/ucm.git'
+
+    for i in $repos 
+    do cd /etc/puppetlabs/code/environments/${env}/modules
+       git clone $i 
+    done  
+
+#  788  git clone zgitlab@git-ct-af-1.associatesys.local:tools/data.git -b ngoms/develop ngoms_dev3
+# branches checkout
+# clear; for i in `cat branches`; do string="`echo $i | sed 's/:/ /g'`"; mod="`echo $string | awk '{print $1}'`" ; branch="`echo $string | awk '{print $2}'`" ; echo "mod = $mod branch = $branch " ; cd /root/modules/${mod} && git checkout $branch ; sleep 1 ; done
+

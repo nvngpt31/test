@@ -1,0 +1,20 @@
+beb.profile.name=<%= @install['beb_profile_name'] %>
+marketdata.profile.name=<%= @install['marketdata_profile_name'] %>
+
+# gains keeper params
+gainskeeper.quantity.threshold=<%= @install['gainskeeper_quantity_threshold'] %>
+gainskeeper.percent.threshold=<%= @install['gainskeeper_percent_threshold'] %>
+gainskeeper.skip.pfcb.enabled=<%= @install['gainskeeper_skip_pfcb_enabled'] %>
+gainskeeper.skip.missinggk.enabled=<%= @install['gainskeeper_skip_missinggk_enabled'] %>
+gainskeeper.skip.missingngoms.enabled=<%= @install['gainskeeper_skip_missingngoms_enabled'] %>
+gainskeeper.skip.missinglogs.enabled=<%= @install['gainskeeper_skip_missinglogs_enabled'] %>
+
+# accounts cache warmup params
+com.tdameritrade.trading.grid.automation.accounts.maxConcurrentRequests=<%= @install['accounts_max_concurrent_requests'] %>
+
+# beb publisher params
+com.tdameritrade.trading.grid.notification.tradeDateFlag=<%= @cns_config['trade_date_flag'] %>
+com.tdameritrade.trading.grid.notification.publishForexFlag=<%= @cns_config['publish_forex_flag'] %>
+com.tdameritrade.trading.grid.notification.publishFutureFlag=<%= @cns_config['publish_future_flag'] %>
+snapshot.account.enabled=<%= @install['snapshot_account_enabled'] %>
+

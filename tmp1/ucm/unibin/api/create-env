@@ -1,0 +1,38 @@
+#!/bin/bash
+
+  while (( "$#" )); do
+    case $1 in
+      -n|--name)  shift && name="$1"     ;;
+    esac
+    shift
+  done
+
+  if [[ -z $name ]] ; then 
+    echo ""
+    echo $line
+    echo ""
+    echo "ERROR: Must include the name option with argument to run this script."
+    echo "-n <ENV NAME>" 
+    echo ""
+    echo $line
+    echo ""
+    exit 1
+  fi 
+
+  environment=$name
+  opts='-s -k'
+  host="ucmnui.associatesys.local"
+  url="https://${host}/api/v2"
+  url_h="${url}/environments"
+  url_h_name="${url}/environments/${name}"
+  user='ngomsadmin'
+  pw='changeme'
+  h_type='Content-Type:application/json'
+  h_accept='Accept:application/json'
+
+  curl -v -k -u "${user}:${pw}" \
+	  -H "Accept:  version=2, application/json" \
+	  -H  "Content-Type: application/json" -X POST \
+	  -d '{"name":"'"${environment}"'"}' \
+	  $url_h | python -m json.tool
+

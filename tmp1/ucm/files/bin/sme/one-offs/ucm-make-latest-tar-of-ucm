@@ -1,0 +1,14 @@
+#!/bin/bash
+
+  cd /urepo/nonpackaged/ucm/ && rm -f ucm-latest.tar.gz
+  cd /urepo/nonpackaged/ucm/git/ucm
+  echo "" 
+  echo "... PULLING LATEST VERSION OF UCM MODULE" ; echo "" ; git pull origin `tgit -b`
+  echo "" 
+  cd /urepo/nonpackaged/ucm/git && tar -czf ucm-latest.tar.gz ucm/
+  mv ucm-latest.tar.gz /urepo/nonpackaged/ucm/
+  cd /urepo/nonpackaged/ucm
+  ls -ltr ucm-latest.tar.gz
+  echo "" 
+  
+  

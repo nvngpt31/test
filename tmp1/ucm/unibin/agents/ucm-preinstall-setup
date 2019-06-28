@@ -1,0 +1,128 @@
+#!/bin/bash
+
+  dir_work='/var/ucm'           
+  dir_log='/var/log/ucm'     
+  dir_files="${dir_work}/ucm-installer-files" 
+  dir_bak="${dir_work}/filebackups"
+  dir_flags="${dir_work}/flags" 
+  dir_yum="/etc/yum.repos.d" 
+  dir_bak_yum="${dir_bak}/yum"                
+  dir_hold_yum="/etc/yum-hold"                
+  file_tdaenv='/etc/tda/env'
+  file_newtdaenv="${dir_files}/tdaenv.new"                 
+  thisrelease="`rpm -q --queryformat '%{VERSION}' redhat-release-server`"
+  yum_header='yumrepos/mrepo'
+  el6="${yum_header}/rhel-6-x86_64"
+  el7="${yum_header}/rhel-7-x86_64"
+  mkdir -p $dir_work $dir_log $dir_files $dir_bak $dir_flags $dir_bak_yum $dir_hold_yum
+  grep -vi buildserver $file_tdaenv | tr '[:upper:]' '[:lower:]' > $file_newtdaenv
+  source $file_newtdaenv
+  cp -rp ${dir_yum}/* $dir_bak_yum  
+  rm -f ${dir_yum}/puppet*
+  mv ${dir_yum}/* ${dir_hold_yum}/
+  
+  if [[ $thisrelease = '6Server' ]]
+  then el="${el6}"
+  else el="${el7}"
+  fi
+
+  urlstringaddons="${el}/RPMS.tda-addons"
+  
+  # SETTING VARS TO TEST FOR BUILD SERVER IN PROD...BECAUSE ITS PRETTY JACKED UP THERE.
+  if [[ $asscli = 'assoc' || $asscli = 'associate' ]]
+  then or="as"
+  else or="cl"
+  fi
+
+  if [[ ${centrify_domain} = 'clientsys.local' ]]
+  then mydomain='clientsys.local'
+  else mydomain='associatesys.local'
+  fi
+
+  auxdomain="`echo $mydomain | sed 's/sys/aux/g'`"
+  buildservers="
+    prd${building}lvyum${or}01.${mydomain}
+    prd${building}lvyum${or}02.${mydomain}
+    prd${building}lvyum${or}01.${auxdomain}
+    prd${building}lvyum${or}02.${auxdomain}
+    prd${building}lsyum${or}01.${auxdomain}
+    prd${building}lsyum${or}02.${auxdomain}
+  "
+  if [[ $centrify_domain = 'iteclientsys.local' ]]
+  then buildservers='
+         pkg-npe-ct-cl-1.associatesys.local
+         pkg-npe-ct-as-1.associatesys.local'
+  fi
+  
+  # TESTING FOR AND SETTING NEW BUILDSERVER
+  for server in $buildservers
+  do echo ""
+     echo "... TRYING $server"
+     echo "... TRYING URL http://${server}/${urlstringaddons}/repodata/repomd.xml" 
+     wget --tries 2 --timeout 2 --quiet http://${server}/${urlstringaddons}/repodata/repomd.xml
+     if [[ $? = '0' ]]
+     then echo "buildserver=${server}" >> $file_newtdaenv
+          touch ${dir_flags}/success_reached_buildserver.txt
+          touch ${dir_flags}/success_ran_preinstall_setup.txt
+          break
+     else echo "... $server failed"
+     fi
+  done
+
+  if [[ ! -f ${dir_flags}/success_reached_buildserver.txt ]] 
+  then echo "... FAILED TO FIND USABLE BUILD SEVER. PLEASE DEBUG MANUALLY."
+       exit 1
+  fi 
+
+
+  source $file_newtdaenv
+  cat <<EOF >/etc/yum.repos.d/addons.repo
+[addons]
+name=addons
+baseurl=http://${buildserver}/${urlstringaddons}
+enabled=1
+gpgcheck=0
+
+[ulse]
+name=tda
+baseurl=http://${buildserver}/yumrepos/mrepo/ulse-x86_64/RPMS.1.1/
+enabled=1
+gpgcheck=0
+
+[rhel64-base]
+name=rhel base
+baseurl=http://${buildserver}/${el}/RPMS.os/
+enabled=1
+gpgcheck=0
+
+[rhel64-optional]
+name=rhel optional
+baseurl=http://${buildserver}/${el}/RPMS.optional/
+enabled=1
+gpgcheck=0
+
+[rhel64-updates]
+name=rhel updates
+baseurl=http://${buildserver}/${el}/RPMS.updates/
+enabled=1
+gpgcheck=0
+
+
+EOF
+
+
+  echo "" 
+  echo "... PREINSTALLING SALT"
+  echo ""
+  yum install -y salt 
+  echo ""
+  if ! rpm -qa | grep -q salt 
+  then echo "... FAILED TO INSTALL SALT"
+       touch ${dir_flags}/failed_to_install_salt.txt
+  fi 
+  echo "" 
+
+  echo ""
+  yum makecache
+  echo ""
+

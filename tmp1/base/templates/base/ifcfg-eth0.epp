@@ -1,0 +1,11 @@
+DEVICE=eth0
+BOOTPROTO=dhcp
+DHCP_HOSTNAME=<%= $hostname %>
+IPV6INIT=no
+HWADDR=<%= $buildmac %>
+ONBOOT=yes
+HOTPLUG=yes
+TYPE=Ethernet
+PEERDNS=no
+NM_CONTROLLED=no
+

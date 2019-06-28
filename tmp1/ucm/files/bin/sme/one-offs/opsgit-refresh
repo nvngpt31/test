@@ -1,0 +1,97 @@
+#!/bin/bash
+
+# THIS SCRIPT DOES THE FOLLOWING
+# - FIRST CHECKS IF WE'RE IN A GIT DIRECTORY
+# - CLEANS THE REPO STATE BY UNCOMMITTING ANY CHANGED FILES
+# - CHECKS IF THE REPO STATE IS CLEAN, BAILS IF NOT
+# - CHECKS IF THE DEFAULT BRANCH 'RELEASE' EXISTS IN THE REMOTE VERSION OF THE REPO (JUST INCASE), BAILS IF NOT
+# - CHECKS IF THE CURRENT BRANCH IS THE DEFAULT BRANCH, SWITCHES IF NOT, FAILS IF COULD NOT SWITCH FOR WHAT EVER REASON
+# - PULLS THE LATEST VERSION OF THE BRANCH, FAILS IF COULD NOT PULL SUCCESSFULLY
+
+  # ----------------------------------------------------------------------------------------------
+  if [[ `whoami` = 'root' ]] 
+  then echo "... YOU SHOULD NOT BE RUNNING THIS SCRIPT AS ROOT, BAILING." 
+       exit 1
+  fi 
+ 
+  branch='release'
+  branchexists () {
+    checkbranch=$1
+    if git branch -a | sed 's/remotes\/origin\///g' | grep -q $checkbranch
+    then echo "true"
+    else echo "false"
+    fi
+  }
+
+  check_if_git () {
+    git rev-parse --git-dir >/dev/null 2>&1
+    if [[ $? != 0 ]]
+    then echo "... THIS DIRECTORY IS NOT A GIT REPOSITORY" ; exit 1
+    fi
+  }
+
+   gitpull () {
+    git pull origin `tgit -b` >/dev/null 2>&1
+    if [[ $? == '0' ]]
+    then echo "true"
+    else echo "fail"
+    fi
+  }
+
+  # ----------------------------------------------------------------------------------------------
+  check_if_git
+
+  # DOCTOR OBVIOUS
+  echo "" 
+  echo "... YOU ARE IN GIT REPOSITORY: \"`tgit -r`\" "
+
+  # CHECKING FOR CLEANLINESS
+  git checkout -- . >/dev/null 2>&1
+
+  porcelain="`git status --porcelain`"
+  if [[ ! -z $porcelain ]] 
+  then echo "... COULD NOT REFRESH GIT DIR. PLEASE RESOLVE MANUALLY THEN RERUN THIS COMMAND"
+       echo "" 
+       echo "... GIT STATUS:"
+       echo "" 
+       git status  
+       echo "" ; echo "" 
+       exit 1
+  else echo "... GIT STATUS IS CLEAN"
+  fi 
+
+  
+  # CHECKING IF BRANCH EXISTS
+  git fetch -a >/dev/null 2>&1
+  if [[ `branchexists $branch` != 'true' ]] 
+  then echo "... COULDN'T FIND BRANCH $branch.  HAS THIS REPO BEEN PREPPED CORRECTLY?"
+       exit 1
+  fi 
+
+  # CHECKING CURRENT BRANCH
+  if [[ `tgit -b` = $branch ]]
+  then branchmatch='true'
+  else branchmatch='false'
+  fi 
+
+  if [[ $branchmatch = 'false' ]] 
+  then echo "... ALL CHANGES MUST BE MADE ON BRANCH: $branch "
+       git checkout $branch >/dev/null 2>&1
+       if [[ $? = '0' ]] 
+       then echo "... SUCCESSFULLY SWITCHED TO BRANCH: $branch"
+       else echo "... FAILED TO SWITCH TO BRANCH $branch"
+            exit 1
+       fi 
+  fi   
+ 
+  # PULL
+  if [[ `gitpull` = 'true' ]] 
+  then echo "... SUCCESSFULLY PULLED BRANCH: $branch"
+       echo "... CURRENT REVISION ENDS IN: `tgit -rv | tail -c 5`"
+  else echo "... FAILED TO PULL BRANCH $branch" ; exit 1
+  fi  
+
+  # LAST ECHO 
+  echo ""  
+
+  

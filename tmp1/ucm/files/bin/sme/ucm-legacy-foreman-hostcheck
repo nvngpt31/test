@@ -1,0 +1,27 @@
+#!/bin/bash
+
+  while (( "$#" ))
+  do case $1 in
+       -n|--name) shift && name="$1"  ;;
+     esac
+     shift
+  done  
+
+  if [[ -z $name ]] 
+  then echo "... please provide -n <server fqdn>"
+       exit 1
+  fi 
+
+  uname='crashoverride'
+  pw='admin'
+  server='foreman.associatesys.local'
+  url="https://${server}/api/v2/hosts/"
+  host=${name}
+
+  curl -s -k -u ${uname}:${pw} -H 'Accept: version=2,application/json' ${url}/${host} | python -m json.tool | grep -q "certname"
+  if [[ $? = '0' ]] 
+  then exit 0
+  else exit 1
+  fi  
+  
+

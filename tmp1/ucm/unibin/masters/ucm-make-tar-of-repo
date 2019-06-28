@@ -1,0 +1,37 @@
+#!/bin/bash
+
+  while (( "$#" )); do
+  case $1 in
+    -d|--dir) shift && dir="$1"  ;;
+  esac
+  shift
+  done
+
+  if [[ -z $dir  ]]
+  then echo "... PLEASE USE -d <directory in /urepo/nonpackaged/ucm/git/ >"
+       exit 1
+  fi
+
+  if [[ ! -d /urepo/nonpackaged/ucm/git/${dir} ]]
+  then echo "... DIR DOES NOT EXIST IN /urepo/nonpackaged/ucm/git/ "
+       exit 1
+  fi
+
+  cd /urepo/nonpackaged/ucm/git/${dir}
+  echo ""
+  echo "... PULLING LATEST VERSION OF ${dir}"
+  echo ""
+  git pull origin `tgit -b`
+  echo ""
+
+  if [[ $? != '0' ]]
+  then echo "... FAILED TO PULL FOR SOME REASON, BAILING."
+       exit 1
+  fi
+
+  cd /urepo/nonpackaged/ucm/git && tar -czf ${dir}.tar.gz ${dir}/
+  echo ""
+  mv ${dir}.tar.gz /urepo/nonpackaged/ucm/tars/
+  ls -ltr /urepo/nonpackaged/ucm/tars/
+  echo ""
+

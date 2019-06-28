@@ -1,0 +1,15 @@
+#!/bin/bash
+
+  # Either super lazy, or effecient.
+
+  clear 
+  git branch > /dev/null 2>&1
+  if [[ $? != '0' ]] ; then echo "...Not in a git repo" ; exit 1; fi
+
+  echo "" ; echo "...Commiting to branch `tgit -b`" 
+  echo "" 
+  git add .
+  git commit -a -m '...' 
+  git push origin `tgit -b`
+  echo "" 
+  

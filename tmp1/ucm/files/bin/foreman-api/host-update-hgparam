@@ -1,0 +1,8 @@
+#!/bin/bash
+#Description: Update host's hostgroup & environment etc..
+
+#update host "devctlvpptapp15.iteclientsys.local" to change the hostgroup to "hostgroup2" 
+#curl -k -u admin:admin -H "Accept: version=2,application/json" -H "Content-Type: application/json" -X PUT -d '{ "name":"devctlvpptapp15.iteclientsys.local","hostgroup_name":"hostgroup2"}' https://devctlvpptapp03.iteclientsys.local/api/hosts/devctlvpptapp15.iteclientsys.local
+
+#update host for environment, assign to nonproduction:
+# curl -k -u admin:admin -H "Accept: version=2,application/json" -H "Content-Type: application/json" -X PUT -d '{ "name":"devctlvpptapp15.iteclientsys.local","environment_name":"nonproduction"}' https://devctlvpptapp03.iteclientsys.local/api/hosts/devctlvpptapp15.iteclientsys.local

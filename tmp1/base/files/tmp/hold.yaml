@@ -1,0 +1,36 @@
+---
+execpath: '/usr/bin:/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin'
+
+base::files:
+  '/tmp/myfile':
+    template: 'base/myfile.epp'
+
+# Define a single file to create in /etc/sysctl.d.  
+base::sysctl::files:
+  '/etc/sysctl.d/base.conf':
+    noop: 'false'
+    template: 'base/sysctl/base.conf.epp'
+
+# These params are used in the file defined in the hash "base::sysctl::file"
+modparams:
+  net_ipv4_conf_all_accept_redirects: 0
+  net_ipv4_conf_all_accept_source_route: 0
+  net_ipv4_conf_all_log_martians: 0
+  net_ipv4_conf_all_rp_filter: 1
+  net_ipv4_conf_all_secure_redirects: 0
+  net_ipv4_conf_all_send_redirects: 0
+  net_ipv4_conf_default_accept_redirects: 0
+  net_ipv4_conf_default_accept_source_route: 0
+  net_ipv4_conf_default_rp_filter: 1
+  net_ipv4_conf_default_secure_redirects: 0
+  net_ipv4_conf_default_send_redirects: 0
+  net_ipv4_icmp_echo_ignore_broadcasts: 1
+  net_ipv4_ip_local_reserved_ports: 9989
+  net_ipv4_tcp_keepalive_intvl: 60
+  net_ipv4_tcp_keepalive_probes: 9
+  net_ipv4_tcp_keepalive_time: 900
+  net_ipv4_tcp_max_syn_backlog: 4096
+  net_ipv4_tcp_syncookies: 1
+  net_ipv4_tcp_timestamps: 0
+
+

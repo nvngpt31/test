@@ -1,0 +1,39 @@
+#!/bin/bash
+
+  while (( "$#" )); do
+    case $1 in
+      -n|--name)  shift && name="$1"      ;;
+      -hg|--hostgroup) shift && hg="$1"   ;;
+      -e|--environment) shift && env="$1" ;;
+    esac
+    shift
+  done
+
+  if [[ -z $name || -z $hg || -z $env ]] ; then 
+    echo ""
+    echo $line
+    echo "ERROR: Must include the name option with argument to run this script."
+    echo "-e <ENVIRONMENT NAME> -n <SERVER FQDN> -hg <HOST GROUP NAME>" 
+    echo ""
+    echo $line
+    echo ""
+    exit 1
+  fi 
+
+  server=$name
+  opts='-s -k'
+  host="tstctlvopenpt01.iteclientsys.local"
+  url="https://${host}/api/v2"
+  url_h="${url}/hosts"
+  url_h_name="${url}/hosts/${name}"
+  user='crashoverride'
+  pw='admin'
+  h_type='Content-Type:application/json'
+  h_accept='Accept:application/json'
+
+  curl -v -k -u "${user}:${pw}" \
+	  -H "Accept:  version=2, application/json" \
+	  -H  "Content-Type: application/json" -X POST \
+	  -d '{"name":"'"${name}"'", "environment_name":"'"${env}"'", "managed":"false", "hostgroup_name":"'"${hg}"'"}' \
+	  $url_h | python -m json.tool
+

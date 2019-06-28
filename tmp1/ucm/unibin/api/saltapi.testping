@@ -1,0 +1,8 @@
+#!/bin/bash
+
+  host='prdtxlvpptapp03.associatesys.local'
+  port='9191'
+  
+  clear 
+  echo "" 
+  curl "http://${host}:${port}"

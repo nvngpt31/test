@@ -1,0 +1,28 @@
+#!/bin/bash
+
+  while : ; 
+  do clear 
+     echo "" 
+     date
+     echo "" 
+     echo "---------------------------------------------------------------------------------"
+     echo "Checking mem:"
+     echo ""
+     free -g 
+     echo "" 
+     free -m 
+     echo "" 
+     echo "---------------------------------------------------------------------------------"
+     echo "Checking procs:"
+     echo "" 
+     echo "salt procs = `ps -ef | grep -i salt | wc -l`"
+     echo "" 
+     echo "---------------------------------------------------------------------------------"
+     echo "Checking cpu:"
+     echo "" 
+     mpstat | awk '$3 ~ /CPU/ { for(i=1;i<=NF;i++) { if ($i ~ /%idle/) field=i } } $3 ~ /all/ { printf("%d%%",100 - $field) }' ; echo ""
+     echo "" 
+     sleep 1
+  done 
+
+     

@@ -1,0 +1,2 @@
+2018-09-07 15:07:31 ucm-inventory = devctlvioddb05.iteclientsys.local:in_foreman:not_in_ucm_foreman:not_in_cmdb
+

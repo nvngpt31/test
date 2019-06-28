@@ -1,0 +1,9 @@
+
+
+  cp ./fruits.txt.orig ./fruits.txt
+  echo "" 
+  echo "" 
+  cat ./fruits.txt
+  echo "" 
+  echo "" 
+

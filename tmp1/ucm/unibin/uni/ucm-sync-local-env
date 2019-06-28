@@ -1,0 +1,19 @@
+#!/bin/bash
+
+  dirmain="/etc/puppetlabs"
+  dirpup="/etc/puppetlabs/puppet"
+  dircode="${dirmain}/code"
+  direnv="${dircode}/environments/production"
+  dirmod="${direnv}/modules"
+
+  echo "... Git pull all modules in the production env."
+  echo ""
+  for i in `ls -1 ${dirmod}`
+  do echo "# ----------------------------------------------------------------------"
+     echo "# Pulling $i"
+     echo ""
+     cd ${dirmod}/${i}
+     git pull origin `/usr/local/bin/tgit -b`
+     echo ""
+  done
+

@@ -1,0 +1,47 @@
+#!/bin/bash
+
+  mkorafs () {
+    disk_path=$1
+    disk_part=${disk_path}1
+    disk_vg=$2
+    disk_lv=$3
+    disk_size=$4
+    disk_mountpoint=$5
+
+    if vgs | awk '{print $1}' | grep -q $disk_vg
+    then vgexists=true
+    else vgexists=false
+    fi
+
+    echo "-----------------------------"
+    echo ""
+    echo -e "o\nn\np\n1\n\n\nw" | fdisk $disk_path
+    pvcreate ${disk_part}
+    echo ""
+    echo "-----------------------------"
+    echo ""
+    if [[ $vgexists = 'false' ]]
+    then vgcreate $disk_vg $disk_part
+    else vgextend $disk_vg $disk_part
+    fi
+    echo ""
+    echo "-----------------------------"
+    echo ""
+    if ! lvs | awk '{print $1}' | grep -q $disk_lv
+    then echo "... CREATING $disk_lv"
+         lvcreate -L ${disk_size}G -n $disk_lv $disk_vg
+         mkfs.ext3 /dev/${disk_vg}/${disk_lv}
+    fi
+    echo ""
+
+  }
+
+  mkorafs /dev/sdb appvg grid_lv   96
+  mkorafs /dev/sdc appvg oracle_lv 47
+  mkorafs /dev/sdd appvg agent_lv  18
+
+  mkdir -p /app/grid /app/oracle /app/agent
+
+  mount -t ext3 /dev/appvg/grid_lv /app/grid/
+  mount -t ext3 /dev/appvg/agent_lv /app/agent/
+  mount -t ext3 /dev/appvg/oracle_lv /app/oracle/

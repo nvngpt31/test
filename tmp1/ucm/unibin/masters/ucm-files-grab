@@ -1,0 +1,173 @@
+#!/bin/bash 
+
+  # ----------------------------------------------------------------------------------------------------
+  # potential features list
+  # . maybe start the script off by removing all empty server dirs? 
+  # . or write something if the scp fails them remove the server dir
+  # . or scp first somewhere temp then if good mkdir then move to dest?
+  
+  # ----------------------------------------------------------------------------------------------------
+  while (( "$#" ))
+  do case $1 in
+       -f|--file)   shift && file="$1"   ;;
+       -s|--server) shift && server="$1" ;;
+     esac
+     shift
+  done
+  
+  echo "" 
+
+  if [[ -z $file ]]
+  then echo "... what remote file do you want to grab?"
+       echo "... use -f or --file <file path> and -s or --server <server name>"
+       exit 1
+  fi 
+
+  if [[ -z $server ]]
+  then echo "... what server are grabbing the remote file from? use -s or --server <server name>"
+       exit 1
+  fi 
+  
+
+  # ----------------------------------------------------------------------------------------------------
+  onlyrunonthisserver='prdctlsulsegw03'
+  thisserver="`hostname`"
+  me=`whoami`
+  workdir="/home/${me}/ucm-files"
+  serverdir="${workdir}/servers"
+  
+  # ----------------------------------------------------------------------------------------------------
+  if [[ $onlyrunonthisserver != $thisserver ]]
+  then echo "... whoops, we can only run this script on $onlyrunonthisserver for now.  bailing."
+       exit 1
+  fi  
+
+  if [[ ! -d /home/${me} ]] 
+  then echo "... whoops, sorry we can only use this script in our /home dirs for now.  doesn't look like you have one."
+       exit 1
+  fi 
+
+  # ----------------------------------------------------------------------------------------------------
+  mkdir -p $workdir
+
+  # check if server is valid
+  /usr/local/bin/simple-dns-check -s $server
+  if [[ $? != '0' ]] 
+  then echo "... whoops, failed to dns lookup $server"
+       exit 1
+  else dnsgood='true'
+  fi 
+ 
+  # setup serverdir if valid
+  path="`echo $file | awk 'BEGIN{FS=OFS="/"}{NF--; print}'`"
+  dest="${serverdir}/${server}${path}"
+  localfile="${serverdir}/${server}${file}"
+  mkdir -p $dest  
+  
+
+  # attempt to grab file from server
+  servernodeenv="`echo $server | awk -F '.' '{print $1}' | cut -c 1-3 | tr '[:lower:]' '[:upper:]'`" 
+  servernodeloc="`echo $server | awk -F '.' '{print $1}' | cut -c 4-5 | tr '[:lower:]' '[:upper:]'`"
+       echo "... source:                 \"${servernodeenv} ${servernodeloc} ${server} : ${file}\"" 
+       echo "... destination directory:  \"${dest}\" "
+  sudo scp -q -o "StrictHostKeyChecking=no" -i /root/sudossh.privkey root@${server}:${file} $dest
+  sudo chown -R ${me}.users $dest 
+
+  if [[ -f $localfile ]]
+  then cp $localfile ${localfile}.lastcopy
+       echo "... edit this file:         \"`ls -1 $localfile`\" "
+       echo "... diff to compare:        \"`ls -1 ${localfile}.lastcopy`\""
+  else echo "... whoops, doesn't look like we grabbed that file.  does it exist on the target system?"
+       exit 1
+  fi 
+
+  echo "" 
+  
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  fn_hold () {
+  echo "test"
+  echo "dest parent = ${serverdir}/${server}"
+  echo "dest        = ${dest}"
+  echo "file        = $file"
+  echo "server      = $server"
+  echo "me          = $me"
+  echo "thisserver  = $thisserver"
+  echo "workdir     = $workdir"
+  echo "serverdir   = $serverdir" 
+  echo "dnsgood     = $dnsgood"
+  }
+  
+
+  
+
+  
+  
+
+  

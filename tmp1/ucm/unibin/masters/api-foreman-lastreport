@@ -1,0 +1,35 @@
+#!/bin/bash
+  source /etc/environment
+  PATH=$NEWPATH
+
+  while (( "$#" )); do
+    case $1 in
+      -s|--server)  shift && server="$1"    ;;
+      -q|--quiet)   shift && quiet='true'   ;;
+    esac
+    shift
+  done
+
+  opts='-s -k'
+  host="ucmnui.associatesys.local"
+  user='ucmadmin'
+  pw='unity2018'
+  h_type='Content-Type:application/json'
+  h_accept='Accept:application/json'
+  msg_err="resource host not found"
+
+  if [[ -z $server ]]
+  then echo "... PLEASE PROVIDE -s < SERVER NAME >" ; exit 1
+  fi
+
+  if [[ -z `echo $server | awk -F '.' '{print $2}'` ]]
+  then echo "... SERVER NAME MUST BE FQDN." ; exit 1
+  fi
+
+  host $server >/dev/null 2>&1
+  if [[ $? != '0' ]]
+  then echo "... COULD NOT RESOLVE $server" ; exit 1
+  fi
+
+  url="https://${host}/api/v2/hosts/${server}/config_reports/last"
+  curl $opts -u "${user}:${pw}" -H "$h_type" -H "$h_accept" $url | python -m json.tool 

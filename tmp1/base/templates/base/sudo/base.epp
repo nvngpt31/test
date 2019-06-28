@@ -1,0 +1,2 @@
+%ulse   ALL=(ALL)   ALL
+zcyberarkunix ALL=(root) /usr/bin/passwd root

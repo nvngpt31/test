@@ -1,0 +1,5 @@
+fixtures:
+  repositories:
+    augeasproviders: 'zgitlab@git-ct-af-1.associatesys.local:ulse/augeasproviders.git'
+  symlinks:
+    kdump: "#{source_dir}"

@@ -1,0 +1,8 @@
+
+
+  echo "" 
+  echo "" 
+  cat ./fruits.txt
+  echo "" 
+  echo "" 
+

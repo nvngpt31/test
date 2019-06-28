@@ -1,0 +1,6 @@
+fixtures:
+  repositories:
+    concat: 'zgitlab@git-ct-af-1.associatesys.local:ulse/concat.git'
+    stdlib: 'zgitlab@git-ct-af-1.associatesys.local:ulse/stdlib.git'
+  symlinks:
+    ntp: "#{source_dir}"

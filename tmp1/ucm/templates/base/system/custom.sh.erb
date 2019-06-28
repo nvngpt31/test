@@ -1,0 +1,8 @@
+#####################################################################################
+# Contents of this file are managed by UCM/Puppet, you should not edit it manually  #
+######################################################################################
+# Make it easy to distingish between root and user shells
+if [ "$PS1" ] && [ $UID -ne 0 ]; then
+    PS1="\u@\h: \w> "
+fi
+

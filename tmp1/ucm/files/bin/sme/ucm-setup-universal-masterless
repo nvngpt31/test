@@ -1,0 +1,32 @@
+#!/bin/bash
+
+
+    
+  addomain="`facter centrify_domain`"
+  ite='iteclientsys.local'
+  dircode='/etc/puppetlabs/code'
+  dirfig='/etc/puppetlabs/code/environments/production/modules/fig'
+  dirlegoss='/etc/puppet'
+  dirlegpe='/etc/puppetlabs/puppet'
+  dirmodules='environments/production/modules'
+  
+  # DETERMINES IF PUPPET 5.X 
+  if [[ -d $dircode ]] 
+  then p5='true'
+  else p5='false'
+  fi 
+
+  # DETERMINES IF HALO MACHINE
+  if [[ $p5 == 'true' ]] 
+  then if [[ -d $dirfig ]] 
+       then is_halo='true'
+       else is_halo='false'
+       fi 
+  fi 
+  
+  # DETERMINES IF LEGACY PUPPET 3.X AND ORIETNATION 
+  if [[ $addomain == $ite && $is_halo == 'false' ]] 
+  then dirmod="${dirlegoss}/${dirmodules}" 
+  else dirmod="${dirlegpe}/${dirmodules}"
+  fi 
+   

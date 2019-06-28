@@ -1,0 +1,107 @@
+#!/bin/bash
+
+  while (( "$#" ))
+  do case $1 in
+       -w|--wait)  wait='true'  ;;
+       -k|--keep)  keep='yes'  ;;
+       -r|--retry) retry='yes'  ;;
+       -p|--puppet) puppet='yes'  ;;
+       -s|--salt) salt='yes'  ;;
+     esac
+     shift
+  done
+
+  if [[ $retry = "yes" ]]
+  then
+  rm -f /etc/facter/facts.d/unitycm_installer_ran.txt
+  fi
+
+  legit_donot_upgrade_these='
+    prdtxlvpptapp01
+    prdtxlvpptapp03
+    prdtxlvpptapp05
+    prdtxlvpptapp06
+    prdtxlvpptapp07
+    prdtxlvpptapp08
+    prdjclvpptapp01
+    prdjclvpptapp03
+    prdjclvpptapp05
+    prdjclvpptapp06
+    prdjclvpptapp01
+    prdjclvpptapp01
+    prdjclvpptapp01
+    prdjclvpptapp01
+    prdjclvpptapp01
+    prdjclvpptapp01
+    prdctlvptfman01
+    prdtxlvptfman01
+    prdjclvptfman01
+    prdctlvptca01
+    prdctlvptca02
+    prdctlvptpeca01
+    prdctlvptpeca02
+    prdjclvptpeca01
+    prdtxlvptpeca01
+    prdctlvptpmcf01
+    prdctlvptpmcf02
+    prdjclvptpmcf01
+    prdjclvptpmcf02
+    prdtxlvptpmcf01
+    prdtxlvptpmcf02
+    prdctlvptpmaf01
+    prdctlvptpmaf02
+    prdjclvptpmaf01
+    prdjclvptpmaf02
+    prdtxlvptpmaf01
+    prdtxlvptpmaf02
+    npectlvptpmcf01
+    npectlvptpmcf02
+    npectlvptpmaf01
+    npectlvptpmaf02'
+
+  for i in $legit_donot_upgrade_these
+  do name="`uname -n`"
+     if [[ $name = $i ]]
+     then echo "... remember 10/12? yea, we're skipping these"
+          exitnow='true'
+     fi
+  done
+
+  if [[ $exitnow = 'true' ]]
+  then exit 1
+  fi
+
+  tar='/tmp/unitycm-installer.tar.gz'
+
+  ls -l /tmp/ | grep -q unitycm-installer.tar.gz
+  if [[ $? != '0' ]]
+  then echo "... failed to find /tmp/unitycm-installer.tar.gz" | tee /tmp/unitycm-installer.log.`date +%A_%b_%e_%Y_%I_%M_%S_%p`
+       exit 1
+  fi
+
+  if [[ $wait = 'true' ]]
+  then seconds="`shuf -i1-120 -n1`"
+       echo "... sleeping for $seconds seconds to splay load"
+       sleep $seconds
+  fi
+
+  cd /tmp
+  tar -vxzf unitycm-installer.tar.gz
+
+  if [[ $puppet = 'yes' ]]
+  then
+    /tmp/unitycm-installer/ucm/unibin/agents/ucm_install_puppet | tee /tmp/unitycm-installer.log.`date +%A_%b_%e_%Y_%I_%M_%S_%p`
+  elif [[ $salt = 'yes' ]]
+  then
+    /tmp/unitycm-installer/ucm/unibin/agents/ucm_install_salt | tee /tmp/unitycm-installer.log.`date +%A_%b_%e_%Y_%I_%M_%S_%p`
+  else
+    /tmp/unitycm-installer/ucm/unibin/agents/unitycm-installer | tee /tmp/unitycm-installer.log.`date +%A_%b_%e_%Y_%I_%M_%S_%p`
+  fi
+
+  mv /tmp/unitycm-installer.log.* /var/log/
+
+  if [[ $keep != "yes" ]]
+  then
+  rm -rf /tmp/salt.tar.gz /tmp/rpms /tmp/unitycm-installer*
+  fi
+

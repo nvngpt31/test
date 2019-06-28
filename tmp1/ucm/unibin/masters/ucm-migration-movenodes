@@ -1,0 +1,68 @@
+#!/bin/bash 
+
+  if [[ -z $1 ]] ; then echo "... PLEASE PROVIDE A SERVER'S FQDN" ; echo "" ; exit 1 ; fi 
+
+  ucmbin="/home/cor846/ucm/bin"                        globalbin="${ucmbin}/global"
+  apibin="/home/cor846/ucm/files/bin/foreman-api"      apilegacybin="${apibin}/legacy"
+  checklegacynode="${apilegacybin}/legacy-hostcheck"   check4hg="${apibin}/view-hostgroup"
+  checkhg="${apibin}/view-hostgroup"                   node=$1
+
+  alias awk_delslashlast="awk -F '/' '{print \$NF}'" ; alias awk_delcomma="awk -F ',' '{print \$1}'"
+  alias awk_delcolon="awk -F ':' '{print \$2}'"      ; alias sed_outqcomma="sed 's/[\"\,,]//g'"
+  alias awk_last="awk '{print \$NF}'"                ; alias lower='tr '[:upper:]' '[:lower:]''
+
+  fn_regex_hostgroup_legacy () { 
+  grep hostgroup_name | awk_delslashlast | sed_outqcomma | lower | tr -d ' ' 
+  }
+
+  fn_regex_hostgroup_id () { 
+  awk_delcomma | awk_delcolon 
+  }
+
+  fn_regex_currenthg () {
+  grep hostgroup_name | sed_outqcomma | awk_last | lower
+  } 
+
+  sh ${globalbin}/check-if-fqdn $node
+  if [[ $? != '0' ]] ; then echo "" ; exit 1 ; fi 
+  
+  echo "" 
+  echo "... LOOKING FOR \"$node\" HOSTGROUP NAME"
+  hg_legacy="`sh $checklegacynode $node | fn_regex_hostgroup_legacy`"
+  echo "... HOSTGROUP FOR \"$node\" IN LEGACY FOREMAN IS \"${hg_legacy}\" "
+  hgid="`sh $check4hg -n $hg_legacy --raw | grep -Po '"id":.*?[^\\\]",' | grep $hg_legacy | fn_regex_hostgroup_id`"
+  if [[ -z $hgid ]] 
+  then echo "... DIDN'T FIND HOSTGROUP \"$hg_legacy\" IN NEW FOREMAN" 
+       echo "... FAILED TO MOVE \"${node}\""
+       echo "" ; exit 1
+  else echo "... HOSTGROUP \"$hg_legacy\" ID: \"${hgid}\" "
+  fi 
+
+  sh ${ucmbin}/ucm-nodecheck -s $node --quiet 
+  if [[ $? != '0' ]] ; then exit 1 ; fi 
+
+  currenthg="`sh ${ucmbin}/ucm-nodecheck -s $node --verbose | fn_regex_currenthg`"
+  echo "... CURRENT HG OF NODE IS \"$currenthg\" "
+  if [[ $currenthg != $hg_legacy ]] 
+  then echo "... HOSTGROUPS DO NOT MATCH, MOVING NODE" 
+
+       sh ${apibin}/update-host-hg -n $node -hg $hgid > /dev/null 2>&1
+
+       if [[ $? != '0' ]] 
+       then echo "... FAILED TO MOVE \"${node}\" FOR SOME REASON, BAILING" ; echo "" 
+            exit 1
+       fi 
+      
+       hg_postmove="`sh ${ucmbin}/ucm-nodecheck -s $node --verbose | fn_regex_currenthg`"
+       echo "... hg_postmove = \"$hg_postmove\""
+       echo "... hg_legacy   = \"$hg_legacy\""
+       if [[ $hg_postmove != $hg_legacy ]] 
+       then echo "... FAILED TO MOVE \"${node}\" FOR SOME REASON, BAILING"   ; echo "" ; exit 1
+       else echo "... SUCCESSFULLY MOVED \"${node}\" TO \"${hg_postmove}\" " ; echo "" ; exit 0
+       fi 
+       
+  else echo "... NODE \"${node}\" HOSTGROUPS MATCH, NO NEED TO MOVE" ; echo "" ; exit 0
+  fi 
+  echo "" 
+
+  

@@ -1,0 +1,73 @@
+#!/bin/bash
+
+  # -----------------------------------------------------------------------------------
+  while (( "$#" ))
+  do case $1 in
+       -p|--path) shift && path="$1" ;;
+       -e|--env) shift && env="$1"   ;;
+     esac
+     shift
+  done
+
+  if [[ -z $path ]]
+  then echo "... Please provide full path to where the UCM Module is cloned."
+       exit 1
+  fi 
+
+  if [[ -z $env ]]
+  then echo "... Please provide puppet env."
+       exit 1
+  fi 
+  
+  if [[ ! -d $path ]]
+  then echo "... Path: \"$path\" not found.  Bailing"
+       exit 1
+  fi 
+
+  # -----------------------------------------------------------------------------------
+  # hiera_config="${path}/files/main/hiera/hiera.yaml"
+
+  dirmain="/etc/puppetlabs"
+  dirpup="/etc/puppetlabs/puppet"
+  dircode="${dirmain}/code"
+  direnv="${dircode}/environments/${env}"
+  dirmod="${direnv}/modules"
+  hiera_config="${path}/files/main/hiera/hiera.p5.dev.masterless.testing"
+  hiera_dest="${dirpup}/hiera.yaml"
+  dirdata="${dircode}/hiera/${env}/hieradata"
+  pconf="${dirpup}/puppet.conf"
+  
+  # -----------------------------------------------------------------------------------
+  echo "... Setting up local masterless Puppet for P5."
+  echo ""
+  echo "... making sure env $env dir exists"
+  mkdir -p $direnv
+  echo "... making sure hiera data dir exists."
+  mkdir -p $dirdata
+  echo "... copying hiera yaml in place."
+  cp $hiera_config $hiera_dest
+  echo "... copying common.yaml in place."
+  cp ${path}/files/main/common.yaml $dirdata
+  echo "... making soft link to modpath in datadir"
+  cd $dirdata 
+  ln -s $dirmod >/dev/null 2>&1
+  echo "... copying ucm mod in place"
+  cp -rp ${path}/ ${dirmod}/ >/dev/null 2>&1
+  rm -rf ${dirmod}/.git
+  echo "... making soft links in root's dir homedir"
+  cd /root/
+  ln -s $dirpup >/dev/null 2>&1
+  ln -s $dirmod >/dev/null 2>&1
+  ln -s $hiera_dest >/dev/null 2>&1
+  ln -s $dirdata >/dev/null 2>&1
+  ln -s $pconf >/dev/null 2>&1
+  echo ""
+  echo "... copying all global scripts to /usr/local/bin"
+  cp -rp ${path}/bin/global/* /usr/local/bin >/dev/null 2>&1
+  echo "... running puppet apply of local test class, which includes a hiera lookup."
+  echo "" 
+  puppet apply -t --environment=${env} --modulepath=${dirmod} -e 'include ucm::masterlesstest'
+
+  echo "" 
+  
+  

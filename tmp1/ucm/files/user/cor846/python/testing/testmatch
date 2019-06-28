@@ -1,0 +1,15 @@
+
+fruit = 'orange'
+color = 'red'
+
+def mymatch(fruit, color):
+  global fruitapple
+
+  if fruit == 'apple':
+    fruitapple = True
+  else:
+    fruitapple = False
+
+mymatch(fruit, color)
+
+print "fruitapple:", fruitapple

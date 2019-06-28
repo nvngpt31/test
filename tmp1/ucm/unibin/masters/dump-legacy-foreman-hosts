@@ -1,0 +1,16 @@
+#!/bin/bash
+
+  uname='crashoverride'
+  pw='admin'
+  server='foreman.associatesys.local'
+  url="https://${server}/api/v2/hosts"
+
+  if [[ ! -d /rdc_migration/ucm/pmdb ]] 
+  then echo "... cannot find /rdc_migration/ucm/pmdb " 
+       exit 1
+  fi 
+
+  curl -k -u ${uname}:${pw} -H 'Accept: version=2,application/json' ${url}/${host}?per_page=99999 | python -m json.tool | tee /rdc_migration/ucm/pmdb/legacy_fman_dump.json
+  grep '"certname":' /rdc_migration/ucm/pmdb/legacy_fman_dump.json | sed 's/[",\,]//g ; s/           certname: //g' > /rdc_migration/ucm/pmdb/hosts_legacy_foreman
+
+

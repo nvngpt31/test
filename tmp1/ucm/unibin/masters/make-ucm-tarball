@@ -1,0 +1,8 @@
+#!/bin/bash
+
+  cd /ulse/ucm/tarballs && rm -f unitycm-installer.tar.gz
+  cd /ulse/ucm/unitycm-installer/ucm && gpl 
+  cd /ulse/ucm
+  tar -vczf ./tarballs/unitycm-installer.tar.gz unitycm-installer/ rpms/puppet-agent*
+  # scp unitycm-installer.tar.gz /ulse/ucm/unitycm-installer/ucm/bin/unitycm-installer.local `whoami`@${server}:/tmp
+

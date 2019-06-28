@@ -1,0 +1,66 @@
+#!/bin/bash
+
+  while (( "$#" ))
+  do case $1 in
+       -s|--server) shift && server="$1" ;;
+       -t|--tool)   shift && tool="$1"   ;;
+     esac
+     shift
+  done
+
+  moddir='/etc/puppetlabs/code/environments/production/modules'
+  binuni='/etc/puppetlabs/code/ucm/git/ucm/unibin'
+  binapi="${binuni}/api"
+  binulb='/usr/local/bin'
+  
+  ### STARTING ECHO
+  echo ""
+  echo "---------------------------------------------------------------------------------"
+  echo ""
+
+  if [[ -z $server && -z $tool ]]
+  then echo "Please provide both server fqdn and tool name with -s <fqdn> -t <your tool's data module name>"
+       exit 1
+  fi 
+
+  serverdomain="`echo $server | awk -F '.' '{print $2}'`"
+  if [[ -z $serverdomain ]]
+  then echo "Please provide server FQDN with -s < FQDN >"
+       exit 1
+  fi 
+
+  if [[ ! -d ${moddir}/${tool} ]] 
+  then echo "Did not find a data module for \"${tool}\" in Production environment's module directory.  Deploy it? Is the name right?"
+       exit 1
+  fi 
+
+  ${binulb}/ucm-nodecheck -s $server >/dev/null 2>&1
+  if [[ $? != '0' ]]
+  then echo "Server \"${server}\" is not in in UCM.  Cannot proceed."
+       exit 1 
+  fi 
+
+  echo "" 
+  echo "Staging server data for Tool: \"${tool}\" & Server: \"${server}\" "
+  echo "" 
+  
+  # POST VOID EXECS 
+  echo "... Enabling running the tools class."
+  echo "" 
+  ${binulb}/host-add-param -s $server -p voidexecs -v true 
+  # POST SMEUCMTOOL PARAM
+  echo "... Setting tool to: \"$tool\" for server: \"$server\". "
+  echo "" 
+  ${binulb}/host-add-param -s $server -p smeucmtool -v $tool
+  # ADD SMEUCMTOOLS CLASS 
+  echo "... Adding the tools class for $server"
+  echo "" 
+  ${binulb}/host-add-class -s $server -c 59
+
+
+  ### CLOSING ECHO
+  echo ""
+  echo "---------------------------------------------------------------------------------"
+  echo "" 
+
+  

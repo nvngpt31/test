@@ -1,0 +1,14 @@
+#!/bin/bash
+
+  while : 
+  do clear 
+     echo "" 
+     echo "TIME: `date`"
+     echo "" 
+     echo "`uname -n` Freemem:    \"`free -g | grep Mem | awk '{print $4}'` GB\" " 
+     echo "`uname -n` Cpu:        \"`mpstat | awk '$3 ~ /CPU/ { for(i=1;i<=NF;i++) { if ($i ~ /%idle/) field=i } } $3 ~ /all/ { printf("%d%%",100 - $field) }'`\" " 
+     echo "`uname -n` Salt Procs: \"`ps -ef | grep -i salt | wc -l`\" "
+     echo "" 
+     sleep 1 
+  done
+

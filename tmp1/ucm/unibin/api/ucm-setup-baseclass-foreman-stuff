@@ -1,0 +1,24 @@
+#!/bin/bash
+
+  while (( "$#" ))
+  do case $1 in
+       -s|--server) shift && server="$1"  ;;
+     esac
+     shift
+  done
+
+  if [[ -z $server ]]
+  then echo "... please provide server name with -s or --server <server name>"
+       exit 1
+  fi 
+
+  domain="`echo $server | awk -F '.' '{print 2}'`"
+  if [[ -z $domain ]]
+  then echo "... whoops, please provide server fqdn."
+           exit 1
+  fi
+ 
+  echo "# --------------------------------------------------------------------------------------------------"
+  ./host-add-param -s $server -p ucmos -v base
+  ./host-add-class -s $server -c 3
+  echo "" 

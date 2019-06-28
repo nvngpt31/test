@@ -1,0 +1,16 @@
+#!/bin/bash
+
+  dboard_search='hosts'
+  helper_option='Accept: version=2,application/json'
+  url='https://foreman.associatesys.local/api/v2'
+  pp='per_page=99999'
+  uname_pw='zforemanquery:defcon2018'
+  # uname_pw='crashoverride:admin'
+
+  if [[ -z $1 ]] 
+  then echo "... MUST PASS THIS SCRIPT A SERVER'S FQDN.  BAILING."
+       exit 1
+  fi 
+
+  checkforhost="${1}"
+  curl -s -k -u ${uname_pw} -H "${helper_option}" "${url}/hosts/${checkforhost}" | python -m json.tool 

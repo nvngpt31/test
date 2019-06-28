@@ -1,0 +1,56 @@
+#!/bin/bash
+
+  for i in `ls -1 /home/cor846/git`
+  do if [[ -d /home/cor846/git/${i} ]]
+     then echo "-------------------------------------------------------------------------------"
+          echo "... Working on $i" 
+          cd /home/cor846/git/${i}
+          currentbranch="`tgit -b`"
+          if [[ $currentbranch != 'release' ]] 
+          then echo "... \"$i\" not set to branch \"release\" "
+               tgit -c
+               bail='false'
+               if [[ $? != '0' ]] 
+               then echo "... BOMB: \"$i\" not set to branch \"release\" and not clean"
+                    bail='true' 
+               fi 
+
+               if [[ $bail != 'true' ]]
+               then git fetch -a > /dev/null 2>&1
+                    if [[ $currentbranch != 'beta' ]] 
+                    then echo "... BOMB: \"$i\" Repo not set to proper starting branch \"beta\" "
+                         bail='true'
+                    fi
+               fi  
+
+               if [[ $bail != 'true' ]]
+               then git checkout -b release > /dev/null 2>&1
+                    if [[ $? != '0' ]] 
+                    then echo "... BOMB: \"$i\" Could not checkout new branch \"release\" "
+                         bail='true'
+                    fi
+               fi  
+               
+               if [[ $bail != 'true' ]]
+               then newcurrentbranch="`tgit -b`"
+                    if [[ $newcurrentbranch != 'release' ]] 
+                    then echo "... BOMB: \"$i\" Could not checkout new branch \"release\" "
+                         bail='true'
+                    fi 
+               fi 
+
+               if [[ $bail != 'true' ]]
+               then git push origin release > /dev/null 2>&1
+                    if [[ $? != '0' ]] 
+                    then echo "... BOMB: \"$i\" Could not push \"release\" "
+                         bail='true'
+                    fi 
+               fi
+             
+               if [[ $bail != 'true' ]]
+               then echo "... Switched and push new branch \"release\" for project \"$i\" "
+               fi 
+          else echo "... \"$i\" is currently set to branch \"release\" "   
+          fi 
+     fi 
+  done    

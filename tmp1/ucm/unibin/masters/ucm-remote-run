@@ -1,0 +1,56 @@
+#!/bin/bash
+  source /etc/environment
+  PATH=$NEWPATH
+
+
+  while (( "$#" )); do
+    case $1 in
+      -s|--server) shift && server="$1" ;;
+    esac
+    shift
+  done
+
+  opts='-s -k'
+  host="ucmnui.associatesys.local"
+  url="https://${host}/api/v2"
+  url_h="${url}/hosts"
+  url_h_name="${url}/hosts/${server}"
+  user='ucmadmin'
+  pw='unity2018'
+  h_type='Content-Type:application/json'
+  h_accept='Accept:application/json'
+  msg_err="resource host not found"
+
+  if [[ -z $server ]]
+  then echo "... PLEASE PROVIDE -s < SERVER NAME >" ; exit 1
+  fi
+
+  if [[ -z `echo $server | awk -F '.' '{print $2}'` ]]
+  then echo "... SERVER NAME MUST BE FQDN." ; exit 1
+  fi
+
+  host $server >/dev/null 2>&1
+  if [[ $? != '0' ]]
+  then echo "... COULD NOT RESOLVE $server" ; exit 1
+  fi
+
+  if curl $opts -u "${user}:${pw}" -H "$h_type" -H "$h_accept" $url_h_name | python -m json.tool | grep -qi "$msg_err"
+  then echo ""
+       echo "... SERVER NOT FOUND IN UCM FOREMAN"
+       echo "... DOES THIS EXIST?"
+       echo ""
+       echo "https://ucmnui.associatesys.local/hosts/${server}"
+       echo ""
+       exit 1
+  fi
+
+  echo ""
+  echo "... SENDING MESSAGE OVER BUS TO RUN PUPPET"
+  echo "... `date`"
+  echo "... `/usr/bin/salt --async $server state.highstate`"
+  echo "... FIND REPORTS FOR THIS NODE ON THE LINK BELOW"
+  echo ""
+  echo "https://ucmnui.associatesys.local/hosts/${server}/config_reports"
+  echo ""
+  echo ""
+

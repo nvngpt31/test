@@ -1,0 +1,36 @@
+#!/bin/bash
+
+  while (( "$#" )); do
+    case $1 in
+      -d|--directory) shift && dir="$1" ;;
+    esac
+    shift
+  done
+
+  if [[ -z $dir ]] 
+  then echo "... PLEASE USE \"-d < DIRECTORY >\" TO PARSE TOP DIR DOWN YAML FILES" 
+       exit 1
+  fi 
+
+  for file in `tree -if $dir | grep '.yaml'`
+  do if [[ ! -d $file ]]  
+     then echo "----------------------------------------------------------------------------" 
+          echo "... CHECKING $file " 
+          echo "" 
+          ruby -e "require 'yaml';puts YAML.load_file('$file')" > /dev/null # 2>&1
+          echo ""
+          if [[ $? != 0 ]]
+          then echo "FAIL: $file"
+          else echo "GOOD: $file"
+          fi
+          echo ""
+     fi
+  done | tee /tmp/ucm-yamlparser-`date +"%A-%b-%e-%Y"__AT__%I.%M.%p`
+  echo "----------------------------------------------------------------------------"
+  
+  echo "... CHECKOUT THESE LOGS"
+  ls -ltr /tmp/ucm-yamlparser-*
+  echo "" 
+  echo "" 
+
+

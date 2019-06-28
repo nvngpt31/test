@@ -1,0 +1,9 @@
+#!/bin/bash
+
+  host=$1
+  ping -c 1 -W 2 $host >/dev/null 2>&1
+  if [[ $? = '0' ]] 
+  then echo "$host good" ; exit 0 
+  else echo "$host bad"  ; exit 1
+  fi 
+

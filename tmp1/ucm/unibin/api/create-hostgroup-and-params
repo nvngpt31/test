@@ -1,0 +1,77 @@
+#!/bin/bash
+
+  line='================================================================================='
+  while (( "$#" )); do
+    case $1 in
+      -n|--name)  shift && name="$1"  ;;
+    esac
+    shift
+  done
+
+  if [[ -z $name ]] ; then 
+    echo ""
+    echo $line
+    echo ""
+    echo "... MISSING ARGUMENTS"
+    echo "" 
+    echo "EXAMPLE: $ ./create-hostgroup -n myapp"
+    echo ""
+    echo $line
+    echo ""
+    exit 1
+  fi 
+
+  # =====================================================================================
+  # "hg" is shorthand for hostgroup
+
+  env='production'
+  envid='1'
+  classid='1'
+  classname='test'
+  class='test'
+  opts='-s -k'
+  host="ucmnui.associatesys.local"
+  url="https://${host}/api/v2"
+  url_hg="${url}/hostgroups"
+  url_hg_name="${url}/hostgroups/${name}"
+  url_hg_name_params="${url}/hostgroups/${name}/parameters"
+  url_hg_name_classes="${url}/hostgroups/${name}/puppetclasses"
+  user='ngomsadmin'
+  pw='changeme'
+  h_type='Content-Type:application/json'
+  h_accept='Accept:application/json'
+
+  # =====================================================================================
+  fn_showvars () {
+    echo ""      ; echo $line    ; echo ""
+    echo "$name" ; echo "$param" ; echo "$value"
+    echo ""      ; echo $line    ; echo ""
+  }
+
+  fn_view_hg_params () {
+    curl $opts -u "${user}:${pw}" -H "$h_type" -H "$h_accept" $url_hg_name_params
+  }
+
+  fn_create_hostgroup () {
+    curl $opts -u "${user}:${pw}" -H "$h_type" -H "$h_accept" -X POST -d "{\"name\":\"$name\",\"environment_id\":\"$envid\"}" $url_hg 
+  }
+
+  fn_add_params_to_hostgroup () {
+    curl $opts -u "${user}:${pw}" -H "$h_type" -H "$h_accept" -X POST -d "{\"name\":\"$param\",\"value\":\"$value\"}" $url_hg_name_params
+  }
+
+  fn_add_classes_to_hostgroup () {
+    curl $opts -u "${user}:${pw}" -H "$h_type" -H "$h_accept" -X POST -d "{\"puppetclasses\":{\"name\":\"$classname\"}}" $url_hg_name_classes
+  }
+
+  # =====================================================================================
+  echo ""
+  echo $line
+  echo ""
+  fn_create_hostgroup         | python -m json.tool
+
+  # fn_add_params_to_hostgroup  | python -m json.tool
+  # fn_add_classes_to_hostgroup | python -m json.tool
+  echo ""
+  echo $line
+  echo ""

@@ -1,0 +1,188 @@
+---
+execpath: '/usr/bin:/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin'
+
+base::groups:
+  'users':
+    ensure: 'present'
+    gid: '103'
+
+base::users:
+  'tstuser':
+    ensure: absent
+    uid: 76543
+    gid: tstgroup
+
+base::packages:
+  'ITM6base':
+    state: 'installed'
+  'tda-capmgt-bpa':
+    state: 'installed'
+  'BESAgent':
+    state: 'installed'
+  'ksh':
+    state: 'installed'
+  'logwatch':
+    state: 'installed'
+  'CentrifyDC':
+    state: 'installed'
+  
+base::files:
+# CENTRIFY
+  '/etc/centrifydc/centrifydc.conf':
+    template: 'base/centrifydc/centrifydc.conf.erb'
+  '/etc/centrifydc/centrifydc.conf.condensed':
+    template: 'base/centrifydc/centrifydc.conf.condensed.erb'
+  '/usr/local/bin/puppet-adjoin':
+    template: 'base/centrifydc/puppet-adjoin.erb'
+    mode: '0775'
+
+# KDUMP
+  '/etc/kdump.conf':
+    template: 'base/kdump/kdump.conf.erb'
+    mode: '0644'
+  '/etc/sysconfig/kdump':
+    template: 'base/kdump/kdump.erb'
+    mode: '0644'
+
+# SSH 
+  '/root/.ssh/authorized_keys':
+    template: 'base/ssh/authkey.erb'
+    mode: '0644'
+  '/etc/ssh/sshd_config':
+    template: 'base/ssh/sshd_config.erb'
+    mode: '0600'
+  '/etc/ssh/ssh_config':
+    template: 'base/ssh/ssh_config.erb'
+    mode: '0644'
+ 
+# SUDO FILES 
+  '/etc/sudoers.d/base_sudo':
+    template: "base/tda/base_sudoers.erb"
+  '/etc/sudoers.d/taddm_sudo':
+    template: 'base/tda/taddm_sudo.erb'
+
+# CRON STUFF
+  '/etc/crontab':
+    mode: '0644'
+    template: 'base/tda/crontab.erb'
+  '/etc/anacrontab':
+    template: 'base/tda/anacrontab.erb'
+    mode: '0600'
+
+# NTP
+  '/etc/ntp.conf':
+    template: 'base/ntp/%{building}.%{domain}.erb'
+
+# MOTD
+  '/etc/motd':
+    template: 'base/motd/%{building}_%{env}_motd.erb'
+
+# PROFILE STUFF
+  '/etc/profile.d/motd_tda.sh':
+    template: 'base/motd/motd_tda.sh.erb'
+  '/etc/profile.d/custom.sh':
+    template: 'base/tda/custom.sh.erb'
+    mode  : '0644'
+
+# SYSLOG
+  '/etc/rsyslog.conf':
+    template: 'base/rsyslog/conf.erb'
+  '/etc/rsyslog.d/arcsight.conf':
+    template: 'base/rsyslog/arcsight/%{asscli}-%{building}-%{env}.erb'
+  '/etc/rsyslog.d/boot.conf':
+    template: 'base/rsyslog/boot.conf.erb'
+  '/etc/rsyslog.d/cron.conf':
+    template: 'base/rsyslog/cron.conf.erb'
+  '/etc/rsyslog.d/mail.conf':
+    template: 'base/rsyslog/mail.conf.erb'
+  '/etc/rsyslog.d/messages.conf':
+    template: 'base/rsyslog/messages.conf.erb'
+  '/etc/rsyslog.d/secure.conf':
+    template: 'base/rsyslog/secure.conf.erb'
+  '/etc/rsyslog.d/spooler.conf':
+    template: 'base/rsyslog/spooler.conf.erb'
+
+# SYSCTL
+  '/etc/sysctl.d/net_ipv4_conf_all_accept_redirects.conf':
+    template: 'base/sysctl/net_ipv4_conf_all_accept_redirects.epp'
+  '/etc/sysctl.d/net_ipv4_conf_all_accept_source_route.conf':
+    template: 'base/sysctl/net_ipv4_conf_all_accept_source_route.epp'
+  '/etc/sysctl.d/net_ipv4_conf_all_log_martians.conf':
+    template: 'base/sysctl/net_ipv4_conf_all_log_martians.epp'
+  '/etc/sysctl.d/net_ipv4_conf_all_rp_filter.conf':
+    template: 'base/sysctl/net_ipv4_conf_all_rp_filter.epp'
+  '/etc/sysctl.d/net_ipv4_conf_all_secure_redirects.conf':
+    template: 'base/sysctl/net_ipv4_conf_all_secure_redirects.epp'
+  '/etc/sysctl.d/net_ipv4_conf_all_send_redirects.conf':
+    template: 'base/sysctl/net_ipv4_conf_all_send_redirects.epp'
+  '/etc/sysctl.d/net_ipv4_conf_default_accept_redirects.conf':
+    template: 'base/sysctl/net_ipv4_conf_default_accept_redirects.epp'
+  '/etc/sysctl.d/net_ipv4_conf_default_accept_source_route.conf':
+    template: 'base/sysctl/net_ipv4_conf_default_accept_source_route.epp'
+  '/etc/sysctl.d/net_ipv4_conf_default_rp_filter.conf':
+    template: 'base/sysctl/net_ipv4_conf_default_rp_filter.epp'
+  '/etc/sysctl.d/net_ipv4_conf_default_secure_redirects.conf':
+    template: 'base/sysctl/net_ipv4_conf_default_secure_redirects.epp'
+  '/etc/sysctl.d/net_ipv4_conf_default_send_redirects.conf':
+    template: 'base/sysctl/net_ipv4_conf_default_send_redirects.epp'
+  '/etc/sysctl.d/net_ipv4_icmp_echo_ignore_broadcasts.conf':
+    template: 'base/sysctl/net_ipv4_icmp_echo_ignore_broadcasts.epp'
+  '/etc/sysctl.d/net_ipv4_ip_local_reserved_ports.conf':
+    template: 'base/sysctl/net_ipv4_ip_local_reserved_ports.epp'
+  '/etc/sysctl.d/net_ipv4_tcp_keepalive_intvl.conf':
+    template: 'base/sysctl/net_ipv4_tcp_keepalive_intvl.epp'
+  '/etc/sysctl.d/net_ipv4_tcp_keepalive_probes.conf':
+    template: 'base/sysctl/net_ipv4_tcp_keepalive_probes.epp'
+  '/etc/sysctl.d/net_ipv4_tcp_keepalive_time.conf':
+    template: 'base/sysctl/net_ipv4_tcp_keepalive_time.epp'
+  '/etc/sysctl.d/net_ipv4_tcp_max_syn_backlog.conf':
+    template: 'base/sysctl/net_ipv4_tcp_max_syn_backlog.epp'
+  '/etc/sysctl.d/net_ipv4_tcp_syncookies.conf':
+    template: 'base/sysctl/net_ipv4_tcp_syncookies.epp'
+  '/etc/sysctl.d/net_ipv4_tcp_timestamps.conf':
+    template: 'base/sysctl/net_ipv4_tcp_timestamps.epp'
+
+# MISC
+  '/etc/rc.d/rc3.d/S99run_puppet':
+    ensure: 'absent'
+  '/etc/security/access.conf':
+    template: "base/tda/access.conf.erb"
+  '/etc/tda-release':
+    template: 'base/tda/tda-release.erb'
+    mode: '0644'
+  '/etc/issue':
+    template: 'base/tda/issue.erb'
+    mode: '0644'
+  '/etc/issue.net':
+    template: 'base/tda/issue.net.erb'
+    mode: '0644'
+  '/etc/default/useradd':
+    template: 'base/tda/useradd.erb'
+    mode  : '0600'
+  '/etc/rc3.d/S97configure_TDA_puppetstyle':
+    ensure: 'absent'
+  '/etc/login.defs':
+    template: 'base/tda/login.defs.erb'
+    mode  : '0644'
+  '/etc/yum/pluginconf.d/subscription-manager.conf':
+    template: 'base/tda/subscription-manager.conf.erb'
+    mode  : '0644'
+  '/etc/netconfig':
+    template: 'base/tda/netconfig.erb'
+    mode: '0644'
+  '/root/.bash_profile':
+    template: 'base/tda/bash_profile.erb'
+    mode: '0644'
+
+base::directories:
+  '/root/.ssh':
+    mode: '0600'
+
+#base::services:
+#  'ntpd':
+#    state: 'running'
+#    refresh_file: '/etc/ntp.conf'
+#  'sshd':
+#    state: 'running'
+#    refresh_file: '/etc/ssh/sshd_config'
+

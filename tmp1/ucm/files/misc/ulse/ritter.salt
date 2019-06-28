@@ -1,0 +1,33 @@
+> do grep $i salt-hb-report.Tuesday_Nov_27_2018_10_27_35_AM.log
+> done
+devctlva2crmq01.iteclientsys.local: Minion did not return. [No response]
+devctlva2crmq02.iteclientsys.local: True
+devctlva2csoc01.iteclientsys.local: True
+devctlva2csoc02.iteclientsys.local: True
+devctlva2cxfr01.iteclientsys.local: True
+devctlvaatapp02.iteclientsys.local: True
+devctlvaatweb02.iteclientsys.local: True
+devctlvaclcsg01.iteclientsys.local: True
+devctlvaclutr01.pteassociatesys.local: True
+devctlvaclutr02.pteassociatesys.local: True
+devctlvagmapp01.iteclientsys.local: True
+devctlvamsapp01.iteclientsys.local: Minion did not return. [No response]
+devctlvapidp01.iteclientsys.local: True
+devctlvappdcn01.pteassociatesys.local: True
+devctlvappdcn02.pteassociatesys.local: True
+devctlvasmbnk01.iteclientsys.local: True
+devctlvblkdck02.pteassociatesys.local: True
+devctlvbosrmq01.iteclientsys.local: True
+devctlvbosrmq02.iteclientsys.local: True
+devctlvbpmbpc01.pteassociatesys.local: True
+devctlvbpmbpc02.pteassociatesys.local: True
+devctlvbpmfna01.pteassociatesys.local: True
+devctlvbpmfna02.pteassociatesys.local: Minion did not return. [No response]
+devctlvbpmfnc01.pteassociatesys.local: True
+devctlvbpmodm01.pteassociatesys.local: True
+devctlvbpmswg01.pteassociatesys.local: True
+devctlvbpmwdm01.pteassociatesys.local: True
+devctlvbpmwdm02.pteassociatesys.local: True
+devctlvbpmwdm03.pteassociatesys.local: True
+devctlvbpmweb01.pteassociatesys.local: True
+

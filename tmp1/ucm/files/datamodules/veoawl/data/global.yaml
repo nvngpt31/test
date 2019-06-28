@@ -1,0 +1,5 @@
+---
+apps:
+  'veoawl':
+    ensure: 'present'
+    platform: 'springboot'

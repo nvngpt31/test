@@ -1,0 +1,28 @@
+#!/bin/bash
+
+  echo "...syncing content"
+
+  yum remove -y tda-tcserver common-auth alerts-oms
+  rm -rf /app/*
+  userdel tomcat
+  userdel dfadm
+  groupdel dfgrp
+
+  if grep -qi tomcat /etc/centrifydc/user.ignore
+  then sed -i '/tomcat/d' /etc/centrifydc/user.ignore
+       service centrifydc restart
+  fi
+
+  rm -f /etc/security/limits.d/tomcat_*
+  rm -f /etc/sudoers.d/ngoms_tomcat_sudo /etc/sudoers.d/omsadm /etc/sudoers.d/unattended_deploy_tomcat
+
+
+  for i in `ls -1 /home/cor846/repos` ; do cp -r /home/cor846/repos/${i} /etc/puppetlabs/code/environments/ngoms_dev3/modules ; done
+  cp -rp /home/cor846/data/hieradata /etc/puppetlabs/code/hiera/ngoms_dev3 ; echo ""
+  # puppet apply -t --environment=ngoms_dev3 --modulepath=/etc/puppetlabs/code/environments/ngoms_dev3/modules/ -e 'include ngoms::test'
+  puppet apply -t --environment=ngoms_dev3 --modulepath=/etc/puppetlabs/code/environments/ngoms_dev3/modules/ -e 'include ngoms::base,ngoms::alerts'
+  # puppet apply -t --environment=ngoms_dev3 --modulepath=/etc/puppetlabs/code/environments/ngoms_dev3/modules/ -e 'include ngoms::alerts'
+  # puppet apply -t --environment=ngoms_dev3 --modulepath=/etc/puppetlabs/code/environments/ngoms_dev3/modules/ -e 'include ngoms::base'
+  # puppet apply -t --environment=ngoms_dev3 --modulepath=/etc/puppetlabs/code/environments/ngoms_dev3/modules/ -e 'include ngoms::base,ngoms::grid,ngoms::coherence_cluster'
+
+

@@ -1,0 +1,2 @@
+ curl -kSs -H Content-type:application/json -u ucmadmin:unity2018 -X PUT https://ucmnui.associatesys.local/salt/node/devctlvvrwweb05.iteclientsys.local -d '{ "host":{"environment": "production" }}'
+

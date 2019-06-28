@@ -1,0 +1,17 @@
+#!/bin/bash
+
+  uname='ucmadmin'
+  pw='unity2018'
+  server='ucmnui.associatesys.local'
+  url="https://${server}/api/v2/hosts"
+
+  clear 
+  echo "This script outputs raw json.  Make sure you are piping it to a formatting command / file or something."
+  echo ""
+  echo "sleeping for 5 seconds..."
+  sleep 5
+  echo "" 
+  curl -k -u ${uname}:${pw} -H 'Accept: version=2,application/json' ${url}/${host}?per_page=99999 
+  # grep '"certname":' /rdc_migration/ucm/pmdb/legacy_fman_dump.json | sed 's/[",\,]//g ; s/           certname: //g' > /rdc_migration/ucm/pmdb/hosts_legacy_foreman
+
+

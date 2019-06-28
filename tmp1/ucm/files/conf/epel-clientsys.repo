@@ -1,0 +1,5 @@
+[rhel7-epel]
+name=epel
+baseurl=http://prdtxlvyumcl02.clientsys.local/yumrepos/mrepo/rhel-7-x86_64/RPMS.epel/
+enabled=1
+gpgcheck=0

@@ -1,0 +1,39 @@
+#!/bin/bash
+
+  source /etc/tda/env
+  dirmod='/etc/puppet/environments/production/modules'
+  dirhra='/etc/puppet/environments/production/hieradata'
+  dirucm="${dirmod}/ucm"
+  filehierayaml='/etc/puppet/hiera.yaml'
+  url="http://${BUILDSERVER}/nonpackaged/ucm"
+  tarucm="ucm-latest.tar.gz"
+
+  if ! rpm -qa | grep -q puppet 
+  then echo "... `uname -n` DOES NOT APPEAR TO HAVE PUPPET INSTALLED.  BAILING."
+       exit 1
+  else echo "... `uname -n` CONFIRMED PUPPET IS INSTALLED, PROCEEDING."
+  fi 
+
+  if [[ -d /etc/puppetlabs/code ]] 
+  then echo "... `uname -n` HAS BEEN UPGRADED TO UCM, BAILING."
+       exit 1
+  else echo "... `uname -n` IS LEGACY, PROCEEDING."
+  fi 
+
+  mkdir -p $dirmod
+  wget ${url}/${tarucm} -O ${dirmod}/${tarucm}
+  cd $dirmod && tar -xzf $tarucm
+  rm -f ${dirmod}/${tarucm}
+  ls -l $dirmod
+
+  cp $filehierayaml ${filehierayaml}.orig
+  cp ${dirucm}/files/main/hiera-legacy.yaml $filehierayaml
+  mkdir -p $dirhra
+  cd $dirhra && ln -s $dirmod >/dev/null 2>&1
+  cp ${dirucm}/files/main/common.yaml $dirhra
+  cp ${dirucm}/files/main/base.yaml $dirhra
+
+  
+  
+  
+  

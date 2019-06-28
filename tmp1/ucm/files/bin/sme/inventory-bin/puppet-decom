@@ -1,0 +1,37 @@
+#!/bin/bash 
+
+  while (( "$#" ))
+  do case $1 in
+       -s|--server) shift && server="$1"  ;;
+     esac
+     shift
+  done
+
+  if [[ -z $server ]] 
+  then echo "... Please provide server name with -s or --server"
+  fi 
+
+  domain="`echo $server | awk -F '.' '{print $2}'`"
+  if [[ -z $domain ]] 
+  then domain_set='false'
+  else domain_set='true'
+  fi 
+
+  domains='
+    iteclientsys.local
+    pteassociatesys.local
+    npeclientaux.local
+    npeassociateaux.local'
+
+  if [[ $domain_set = 'true' ]] 
+  then echo "..." 
+  else 
+    
+    for serverdomain in $domains 
+    do echo "--------------------------------------------------------------------------------------------" 
+       echo "" 
+       /usr/local/bin/fman-legacy-api-hostdelete -s ${server}.${serverdomain}
+       echo "" 
+    done 
+  fi 
+

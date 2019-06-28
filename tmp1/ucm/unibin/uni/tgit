@@ -1,0 +1,175 @@
+#!/bin/bash
+
+# Version 2018.1
+
+  while (( "$#" )); do
+    case $1 in
+      -r|--remote)                 shift && showremote='true'         ;;
+      -rv|--revision)              shift && showrev='true'            ;;
+      -rvs|--revision-short)       shift && showrevshort='true'       ;;
+      -b|--branch)                 shift && showbranch='true'         ;;
+      -h|--help)                   help='true'                        ;;
+      -md|--makesdir)              shift && makesdir='true'           ;;
+      -vrb|--verify-remote-branch) shift && vrb="$1" && vrbset='true' ;;
+      -sb|--switch-branch)         shift && sb="$1" && sbset='true'   ;;
+      -p|--pull)                   shift && pull='true'               ;;
+      -t|--topdir)                 shift && topdir="true"             ;;
+      -c|--cleanstatus)            shift && cleanstatus='true'        ;;
+      -g|--check-ifgitdir)         shift && checkifgitdir='true'      ;;
+    esac
+    shift
+  done
+
+  check_if_git () {
+    git rev-parse --git-dir >/dev/null 2>&1
+    if [[ $? != 0 ]]
+    then echo "...Not in a Git directory" ; exit 1
+    fi
+  }
+
+  check_if_git
+
+  # --------------------------------------------------------------------------------------------
+  fetch () {
+    git fetch -a -p
+  }
+
+  pull () {
+    pullbranch="`show_branch`"
+    git pull origin $pullbranch
+  }
+
+  show_rem () {
+    git remote -v | head -1 | awk '{print $2}'
+  }
+
+  show_branch () {
+    git branch | grep '\*' | awk '{print $NF}'
+  }
+
+  show_rev () {
+    git rev-parse HEAD
+  }
+
+  showrevshort () {
+    git rev-parse HEAD | tail -c 5
+  }
+
+  show_makesdir () {
+    git remote -v | head -1 | awk '{print $2}' | awk -F '/' '{print $NF}' | sed 's/.git//g'
+  }
+
+  show_topdir () {
+    git rev-parse --show-toplevel
+  } 
+  
+  fn_cleanstatus () {
+  if [ -z "$(git status --porcelain)" ]
+  then statusclean='true'
+  else statusclean='false'
+  fi
+
+  if [ $statusclean = 'true' ]
+  then exit 0
+  else exit 1
+  fi
+
+  }
+
+  verify_remote_branch_exists () {
+    fetch
+    if [[ $? = '0' ]]
+    then fetchworked='true'
+    else fetchworked='false'
+    fi
+
+    rembranchurl="`show_rem`"
+    rbgood='null'
+    rembranch="`git ls-remote --heads $rembranchurl $vrb`"
+    if [[ -z $rembranch ]] 
+    then rbgood='false'
+    else rbgood='true'
+    fi 
+  }
+
+  switch_branch () {
+    fetch 
+    if [[ $? = '0' ]]
+    then fetchworked='true'
+    else fetchworked='false'
+    fi  
+
+    git checkout $sb 
+    if [[ $? = '0' ]]
+    then checkoutworked='true'
+    else checkoutworked='false'
+    fi  
+  }
+
+  # --------------------------------------------------------------------------------------------
+  if [[ $pull = 'true' ]]
+  then pull > /dev/null 2>&1
+    if [[ $? = '0' ]]
+    then exit 0 
+    else exit 1
+    fi  
+  fi
+
+  if [[ $cleanstatus = 'true' ]]
+  then fn_cleanstatus 
+  fi
+
+  if [[ $showbranch = 'true' ]]
+  then show_branch
+  fi
+
+  if [[ $showremote = 'true' ]]
+  then show_rem
+  fi
+
+  if [[ $showrev = 'true' ]]
+  then show_rev
+  fi
+
+  if [[ $showrevshort = 'true' ]]
+  then showrevshort
+  fi
+
+  if [[ $makesdir = 'true' ]]
+  then show_makesdir
+  fi
+
+  if [[ $topdir = 'true' ]]
+  then show_topdir
+  fi
+
+  if [[ $checkifgitdir = 'true' ]] 
+  then check_if_git 
+  fi 
+
+  if [[ $vrbset = 'true' ]] ; then 
+    if [[ -z $vrb ]]
+    then echo '...Please provide -vrb <branch name to verify>' ; exit 1
+    else verify_remote_branch_exists >/dev/null 2>&1
+      if [[ $fetchworked = 'true' && $rbgood = 'false' ]] 
+      then exit 1
+      else exit 0
+      fi 
+    fi
+  fi
+
+  if [[ $sbset = 'true' ]] ; then
+    if [[ -z $sb ]]
+    then echo '...Please provide -sb <branch name to switch to>' ; exit 1
+    else switch_branch > /dev/null 2>&1
+      if [[ $fetchworked = 'true' && $checkoutworked = 'true' ]]
+      then exit 0
+      else exit 1
+      fi
+    fi
+  fi
+
+  if [[ $help = 'true' ]]
+  then echo "...help coming soon"
+  fi
+

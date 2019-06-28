@@ -1,0 +1,4 @@
+this is a static line of text.
+this is a line containing a facter fact (top scope var) lookup.  this hosts name = <%= $fqdn %>
+this is a ling containing a hiera data item lookup.  mystring = <%= lookup('mystring') %>
+

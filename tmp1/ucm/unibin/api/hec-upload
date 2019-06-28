@@ -1,0 +1,41 @@
+#!/usr/bin/python
+import json, requests, sys
+import urllib3
+urllib3.disable_warnings(urllib3.exceptions.InsecureRequestWarning)
+
+if len(sys.argv) > 1:
+   host = sys.argv[1]
+   print host
+else:
+   print "Provide a hostname as the first argument."
+   sys.exit(1)
+
+url = 'https://ucmnui.associatesys.local/api/v2/hosts/'+ host +'/config_reports/last'
+headers = {'Content-Type': 'application/json', 'Accept': 'application/json'}
+resp = requests.get(url, headers=headers, auth=('ucmadmin', 'unity2018'), verify=False)
+
+if resp.status_code == requests.codes.ok:
+   jsonReport = resp.json()
+   events = [{'created_at': jsonReport['created_at'], 'updated_at': jsonReport['created_at'],
+           'id': jsonReport['id'], 'host_id': jsonReport['host_id'], 'host_name': jsonReport['host_name'],
+           'reported_at': jsonReport['reported_at'], 'summary': jsonReport['summary']}]
+
+   for log in jsonReport['logs']:
+       events.append(events[0])
+       events[-1]['level'] = log['level']
+       events[-1]['logsource'] = log['source']['source']
+       events[-1]['message'] = log['message']['message']
+       events[-1] = json.dumps(events[-1])
+   del events[0]
+
+   hecUrl = 'https://prdtxlsspnkhec1.clientsys.local:443/services/collector/event'
+   hecHeaders = {'Authorization': 'Splunk 0413CEA7-0155-4BB3-A929-19BF80D50B65'}
+   posted=""
+   for event in events:
+       sendResp = requests.post(hecUrl, headers=hecHeaders, json={"event": event}, verify=False)
+       if sendResp.status_code == requests.codes.ok:
+           posted="  Done..."
+   print posted
+else:
+   raise('Exception: ' + str(resp.status_code) + ' error')
+

@@ -1,0 +1,22 @@
+#!/bin/bash 
+
+  source /etc/environment
+  PATH=$NEWPATH
+  path_setup_properties_file='/etc/puppetlabs/code/ucm/conf/setup.properties' 
+
+  if [[ ! -f $path_setup_properties_file ]] 
+  then echo "... Whoops, didn't find \"${path_setup_properties_file}\" "
+       exit 1
+  else source $path_setup_properties_file
+  fi 
+
+  dir_log_hb="${dir_log_parent}/salt-heartbeats"
+  log="${dir_log_hb}/salt-hb-report.`date +"%A_%b_%e_%Y"_%I_%M_%S_%p`.log"
+  mkdir -p $dir_log_hb
+
+  # Remove log files older than 7 days
+  find ${dir_log_hb}/salt-hb-report.* -mtime +7 -type f -delete
+  salt --out txt "*" test.ping | tee $log 
+  chown -R zsmeucm.zsmeucm $dir_main 
+  chmod -R 0775 $dir_main
+

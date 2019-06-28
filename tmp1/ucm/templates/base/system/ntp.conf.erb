@@ -1,0 +1,15 @@
+#####################################################################################
+## Contents of this file are managed by UCM/Puppet, you should not edit it manually  #
+######################################################################################
+
+driftfile /var/lib/ntp/drift
+
+server ntp-<%= @building %>-<%= @orientation %>-1.associatesys.local
+server ntp-<%= @building %>-<%= @orientation %>-2.associatesys.local
+server ntp-<%= @building %>-<%= @orientation %>-3.associatesys.local
+
+# Local users may interrogate the ntp server more closely.
+restrict default kod nomodify notrap nopeer noquery
+restrict 127.0.0.1
+restrict ::1
+

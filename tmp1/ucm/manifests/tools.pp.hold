@@ -1,0 +1,69 @@
+class ucm::tools (
+  $onetime = 'nodef',
+
+){
+
+  tag 'ucm_tools'
+
+  if $::smeucmtool == undef {
+  }
+
+  else { 
+
+    if $onetime == 'nodef' { 
+      $tool = $::smeucmtool
+    } 
+  
+    else {
+      $tool = $onetime # this overrides locally set smeucmtool facts
+    } 
+
+    $tool_groups      = "${tool}::groups"
+    $tool_users       = "${tool}::users"
+    $tool_packages    = "${tool}::packages"
+    $tool_directories = "${tool}::directories"
+    $tool_files       = "${tool}::files"
+    $tool_cmds        = "${tool}::cmds"
+  
+    notify {
+      'msg_cfgtool':
+        message => "... CONFIGURING $smeucmtool"
+    }
+
+    ucm::custom::tools::groups {
+      "$tool":
+        lookupitem => "$tool_groups",
+        require    => Notify['msg_cfgtool']
+    }
+
+    ucm::custom::tools::users {
+      "$tool":
+        lookupitem => "$tool_users",
+        require    => Ucm::Custom::Tools::Groups["$tool"]
+    }
+
+    ucm::custom::tools::packages {
+      "$tool":
+        lookupitem => "$tool_packages",
+        require    => Ucm::Custom::Tools::Users["$tool"]
+    }
+
+    ucm::custom::tools::directories {
+      "$tool":
+        lookupitem => "$tool_directories",
+        require    => Ucm::Custom::Tools::Packages["$tool"]
+    }
+
+    ucm::custom::tools::files {
+      "$tool":
+        lookupitem => "$tool_files",
+        require    => Ucm::Custom::Tools::Directories["$tool"]
+    }
+
+    ucm::custom::tools::cmds {
+      "$tool":
+        lookupitem => "$tool_cmds",
+        require    => Ucm::Custom::Tools::Files["$tool"]
+    }
+  }
+}

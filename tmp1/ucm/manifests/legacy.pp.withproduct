@@ -1,0 +1,83 @@
+class ucm::legacy (
+){
+  tag 'ucm_legacy'
+
+  notify {
+    'msg_legacy_OS':
+      message => "... MANAGING LEGACY OS CONFIG."
+  }
+
+  class { 
+    'ucm::legacy::os': 
+      require => Notify['msg_legacy_OS']
+  }
+      
+
+  if $::product == undef {
+    notify {
+      'msg_legacy_notdefined':
+        message => "... PRODUCT FACT NOT DEFINED LOCALLY OR IN FOREMAN.  BAILING."
+    }
+  }
+
+  else {
+
+    notify {
+      'msg_legacy':
+        message => "... MANAGING LEGACY CONFIG."
+    }
+
+    class { 
+      'ucm::legacy::groups': 
+        require => Notify['msg_legacy'] 
+    }
+    
+    class { 
+      'ucm::legacy::users': 
+        require => Class['ucm::legacy::groups']
+    }
+
+    class { 
+      'ucm::legacy::packages':
+        require => Class['ucm::legacy::users']
+    }
+
+    class { 
+      'ucm::legacy::directories': 
+        require => Class['ucm::legacy::packages']
+    }
+
+    class { 
+      'ucm::legacy::files': 
+        require => Class['ucm::legacy::directories']
+    }
+
+    #class { 
+    #  'ucm::legacy::links': 
+    #    require => Class['ucm::legacy::files']
+    #}
+
+    class { 
+      'ucm::legacy::limits': 
+      #require => Class['ucm::legacy::links']
+      require => Class['ucm::legacy::files']
+    }
+
+    class { 
+      'ucm::legacy::kernelparams': 
+      require => Class['ucm::legacy::limits']
+    }
+
+    notify {
+      "legacy_cmds":
+        message => "... RUNNING COMMANDS FOR PRODUCT $::product THIS COULD TAKE A WHILE.  WILL EXIT IF FAILURES.",
+        require => Class['ucm::legacy::kernelparams']
+    }
+
+    class { 
+      'ucm::legacy::commands': 
+        require => Notify['legacy_cmds'] 
+    }
+  }
+}
+

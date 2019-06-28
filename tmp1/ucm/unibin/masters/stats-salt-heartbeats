@@ -1,0 +1,24 @@
+#!/bin/bash
+
+  logdir='/etc/puppetlabs/code/ucm/log/salt-heartbeats'
+  apicall='/etc/puppetlabs/code/ucm/git/ucm/unibin/api/dashboard-call' 
+  logfile="${logdir}/pingstate.txt"
+  echo ""
+  echo "Running Ping across bus..."
+  echo ""
+  rm -f $logfile
+  salt "*" test.ping --out txt | tee $logfile
+  total_foreman="`sh ${apicall} | grep "total_hosts" | grep -vi 'Total hosts count' | awk '{print $NF}'`"
+  total_bus="`wc -l $logfile | awk '{print $1}'`"
+  echo ""
+  echo "=================================================================================="
+  echo "Ping State Statistics:"
+  echo ""
+  echo "Total Servers in Foreman:       \"${total_foreman}\" "
+  echo "Total Servers connected to bus: \"${total_bus}\" "
+  echo "Delta between Foreman & Salt:   \"`expr $total_foreman - $total_bus`\" "
+  echo ""
+  echo "Total responsive servers:       \"`grep 'True' $logfile | wc -l | awk '{print $1}'`\" "
+  echo "Total unresponsive servers:     \"`grep -v 'True' $logfile | wc -l | awk '{print $1}'`\" "
+  echo ""
+

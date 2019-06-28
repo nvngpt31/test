@@ -1,0 +1,33 @@
+#!/usr/bin/python
+import argparse, sys, re
+
+v_method  = 'contains'
+v_search  = '3000'
+v_should  = '8080'
+v_file    = '/tmp/props.txt'
+v_update  = 'first'
+v_replace = 'string' 
+
+with open(v_file) as readfile:
+
+  found_search = False
+  if v_method == 'contains':
+    for line in readfile:
+      print line
+      if v_search in line:
+        found_search = True
+        print "Found match for string:", v_search
+        break
+  else:
+    print "Did not find match for string:", v_search
+
+if found_search: 
+
+  with open(v_file) as f:
+    replaceall=f.read().replace(v_search, v_should)
+
+  with open(v_file, "w") as f:
+    f.write(replaceall)
+    sys.exit(0)
+
+

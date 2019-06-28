@@ -1,0 +1,73 @@
+#!/bin/bash
+
+  # =====================================================================================
+  # THIS SCRIPT TAKES ARGUMENTS TO
+  #  . CREATE A NEW HOSTGROUP IN FOREMAN
+  #  . ADD A GLOBAL PARAMETER AND VALUE
+  #
+  # =====================================================================================
+
+  # =====================================================================================
+  line='================================================================================='
+  while (( "$#" )); do
+    case $1 in
+      -n|--name)   shift && name="$1"     ;;
+      -p|--params) shift && params="true" ;;
+      -r|--raw)    shift && raw='true'    ;;
+    esac
+    shift
+  done
+
+  if [[ -z $name ]] ; then 
+    echo ""
+    echo $line
+    echo ""
+    echo "ERROR: Must include the name option with argument to run this script."
+    echo "EXAMPLE: $ ./view-hostgroup -n myapp" 
+    echo "Optionally, you can include --params to view the hostgroup's paramters only."
+    echo ""
+    echo $line
+    echo ""
+    exit 1
+  fi 
+
+  # =====================================================================================
+  # "hg" is shorthand for hostgroup
+
+  opts='-s -k'
+  host="ucmnui.associatesys.local"
+  url="https://${host}/api/v2"
+  url_hg="${url}/hostgroups"
+  url_hg_name="${url}/hostgroups/${name}"
+  url_hg_name_params="${url}/hostgroups/${name}/parameters"
+  user='ucmadmin'
+  pw='unity2018'
+  h_type='Content-Type:application/json'
+  h_accept='Accept:application/json'
+
+  # =====================================================================================
+  fn_showvars () {
+    echo ""      ; echo $line    ; echo ""
+    echo "$name" ; echo "$param" ; echo "$value"
+    echo ""      ; echo $line    ; echo ""
+  }
+
+  fn_view_hg () {
+    if [[ ! -z $params ]]
+    then curl $opts -u "${user}:${pw}" -H "$h_type" -H "$h_accept" $url_hg_name_params
+    else curl $opts -u "${user}:${pw}" -H "$h_type" -H "$h_accept" $url_hg_name 
+    fi 
+  }
+
+  # =====================================================================================
+  echo ""
+  echo $line
+  echo ""
+  if [[ $raw == 'true' ]] 
+  then fn_view_hg
+  else fn_view_hg | python -m json.tool
+  fi 
+ 
+  echo ""
+  echo $line
+  echo ""

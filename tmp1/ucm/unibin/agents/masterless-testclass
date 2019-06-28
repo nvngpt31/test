@@ -1,0 +1,17 @@
+#!/bin/bash
+
+  while (( "$#" ))
+  do case $1 in
+       -c|--class) shift && class="$1"  ;;
+       -e|--environment) shift && env="$1"  ;;
+     esac
+     shift
+  done
+
+  if [[ -z $env || -z $class ]]
+  then echo "... please provide both -e environment name -c puppet class"
+       exit 1
+  fi 
+
+  puppet apply -t --environment=${env} --modulepath=/etc/puppetlabs/code/environments/${env}/modules -e "include $class"
+

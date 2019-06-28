@@ -1,0 +1,48 @@
+#!/bin/bash 
+
+  tgit -g >/dev/null 2>&1
+  
+  if [[ $? != '0' ]] 
+  then echo "... Please run this command from within your git working directory."
+       echo "" 
+       echo "... This script will deploy the current branch and git"
+       echo "... repository URL to our UCM Ecosystem." 
+       exit 1
+  fi 
+
+  pwd="`pwd`"
+  parent="`tgit -t`"
+
+  tgit -c
+  if [[ $? != '0' ]] 
+  then echo ""
+       echo "... Git status is NOT clean.  Please manage changes before deploying"
+       echo ""
+       cd $parent
+       git status
+       cd $pwd
+       echo ""
+       exit 1
+  fi  
+  
+  branch="`tgit -b`"
+  giturl="`tgit -r`"
+
+  server="prdtxlvpptapp03.associatesys.local"
+  url="http://${server}/cgi-bin/ucm-deploy.cgi"
+
+  echo "" 
+  echo "" 
+  echo "... Now Deploying \"$giturl\" on Branch \"$branch\""
+
+  while :
+  do echo -ne ">" 
+     sleep .5
+  done &
+
+  trap "kill $!" EXIT
+  curl -s "${url}?giturl=${giturl}&branch=${branch}" | tail -f | grep -v '[>,<]' ; echo ''
+  kill $! && trap " " EXIT 
+  echo ""
+
+

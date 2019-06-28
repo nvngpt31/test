@@ -1,0 +1,26 @@
+#!/bin/bash
+
+  ispe="`facter -p is_pe`"
+  range='1-420'                # 420 minutes in 7 hours
+  time="`shuf -i${range} -n1`" # Choose an amount of minutes from this range to wait
+  wait="sleep ${time}m"        # wait ^ many minutes
+  now="`date +%H%M`"           # time now in military
+  start='1800'                 # start at 6pm
+  finish='0100'                # finish at 1am
+  runpuppet='puppet agent -t --ignorecache'
+
+  if [[ $ispe != 'true' ]]
+  then puppet_service=puppet
+  else puppet_service=pe-puppet
+  fi 
+
+  service $puppet_service stop 
+  chkconfig $puppet_service off
+
+  #
+  if [[ $now -gt $start || $now -lt $finish ]]
+  then echo "...`date` tda-puppet-run via cron, sleeping $time seconds then running Puppet" >> /var/log/messages
+       $wait && $runpuppet
+  else echo "...current time ${now} (`date +%r`) not between $start (7pm)  and $finish (1am), not running Puppet"
+  fi
+

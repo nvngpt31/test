@@ -1,0 +1,56 @@
+#!/bin/bash
+
+  # =====================================================================================
+  # THIS SCRIPT TAKES ARGUMENTS TO
+  #  . CREATE A NEW HOSTGROUP IN FOREMAN
+  #  . ADD A GLOBAL PARAMETER AND VALUE
+  #
+  # =====================================================================================
+
+  # =====================================================================================
+  line='================================================================================='
+  while (( "$#" )); do
+    case $1 in
+      -n|--name)  shift && name="$1"     ;;
+    esac
+    shift
+  done
+
+  if [[ -z $name ]] ; then 
+    echo ""
+    echo $line
+    echo ""
+    echo "ERROR: Must include the name option with argument to run this script."
+    echo "EXAMPLE: $ ./view-host -n myapp" 
+    echo ""
+    echo $line
+    echo ""
+    exit 1
+  fi 
+
+  # =====================================================================================
+
+  server=$name
+  opts='-s -k'
+  host="ucmnui.associatesys.local"
+  url="https://${host}/api/v2"
+  url_h="${url}/hosts"
+  url_h_name="${url}/hosts/${name}"
+  user='ucmadmin'
+  pw='unity2018'
+  h_type='Content-Type:application/json'
+  h_accept='Accept:application/json'
+  msg_err="resource host not found"
+
+  # =====================================================================================
+  if curl $opts -u "${user}:${pw}" -H "$h_type" -H "$h_accept" $url_h_name | python -m json.tool | grep -qi "$msg_err"
+  then echo ""
+       echo "... SERVER NOT FOUND IN UCM FOREMAN"
+       echo "... DOES THIS EXIST?"
+       echo ""
+       echo "https://ucmnui.associatesys.local/hosts/${server}"
+       echo ""
+       exit 1
+  else curl $opts -u "${user}:${pw}" -H "$h_type" -H "$h_accept" $url_h_name | python -m json.tool 
+  fi
+

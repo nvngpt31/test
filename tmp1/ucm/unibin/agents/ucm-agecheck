@@ -1,0 +1,13 @@
+#!/bin/bash
+
+  # 6 Months of seconds
+  total_seconds='15552000'
+  echo $(( `date +%s` - `stat -L --format %Y /etc/tda/env` )) > /etc/tda/env-age
+  ageoftdaenv="`cat /etc/tda/env-age`"
+
+  if [[ $ageoftdaenv -gt $total_seconds ]]
+  then echo "`uname -n` is older than 6 months"
+       touch /tmp/ucmgo.txt
+  else echo "`uname -n` is younger than 6 months"
+  fi
+
