@@ -1,0 +1,70 @@
+fstab:
+UUID=1ea88f37-7d51-4445-bfdb-462d0d8c1da3       /boot   xfs     defaults        0       0
+/dev/mapper/sysvg-opt_lv        /opt    xfs     defaults        0       0
+/dev/mapper/sysvg-bmc_lv        /opt/bmc        xfs     defaults        0       0
+/dev/mapper/sysvg-tmp_lv        /tmp    xfs     defaults,nosuid 0       0
+/dev/mapper/sysvg-var_lv        /var    xfs     defaults        0       0
+/dev/mapper/sysvg-swap_lv       swap    swap    defaults        0       0
+shmfs   /dev/shm        tmpfs   defaults,nosuid,nodev,noexec    0       0
+/tmp    /var/tmp        none    bind    0       0
+/dev/appvg/data1_lv     /app    ext4    defaults        1       2
+
+
+-------------------
+Setting the sticky bit on world writable directories prevents users from deleting or renaming files in that directory that are not owned by them
+
+---------------
+#df --local -P | awk {'if (NR!=1) print $6'} | xargs -I '{}' find '{}' -xdev -type d \( -perm -0002 -a ! -perm -1000 \) 2>/dev/null
+---------------
+addon.pp
+class ucm::addon (
+  $service_disable_el7 = [ 'avahi-daemon',
+                             'cups', ],
+  $service_disable_el6 = [ 'chargen-dgram',
+                             'chargen-stream',
+                             'daytime-steam',
+                             'daytime-gram',
+                             'echo-dgram',
+                             'echo-stream',
+                             'tcpmux' ],
+  $readonly              = 'true',
+
+){
+
+  file { '/var/tmp/chk_users.sh':
+    ensure => present,
+    source => ["puppet:///modules/base_extra/chk_users.sh/"],
+    mode   => '0755',
+    notify => Exec['run_chk_users']
+  }
+
+  exec {"run_chk_users":
+    cwd          => '/var/tmp',
+    path         => '/usr/local/bin/:/bin:/usr/sbin:/var/tmp',
+    command      => "chk_users.sh",
+    logoutput    => true,
+    #refreshonly => true,
+  }
+
+  if $facts['os']['release']['major'] == '7' {
+    service {
+      $service_disable_el7:
+        ensure   => 'stopped',
+        enable   => false,
+        noop     => $readonly,
+    }
+   }
+
+  if $facts['os']['release']['major'] == '6' {
+    service {
+      $service_disable_el6:
+        ensure   => 'stopped',
+        enable   => false,
+        noop     => $readonly,
+    }
+  }
+
+}
+
+
+ ==========================
